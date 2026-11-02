@@ -261,3 +261,13 @@ ul, ol { padding: 0; list-style: none; }
   .tim-grid .osoba__meno, .tim-grid h3.bb { font-size: 24px !important; }
   .tim-grid .osoba p:last-child { font-size: 14px; }
 }
+
+/* MNK Studio: hero a portfólio */
+.studio-hero { flex: 1 1 360px; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: center; }
+.studio-hero img, .studio-hero video { display: block; width: 100%; object-fit: cover; background: #3A3A3C; }
+.port { columns: 3 260px; column-gap: 28px; }
+.port__item { break-inside: avoid; display: flex; flex-direction: column; gap: 8px; margin-bottom: 36px; }
+.port__item[hidden] { display: none; }
+.port__item img, .port__item video { display: block; width: 100%; height: auto; object-fit: cover; background: var(--mata-2); }
+.port__item h3 { font-size: 28px; line-height: 1; }
+.port__item p { font-size: 14px; }

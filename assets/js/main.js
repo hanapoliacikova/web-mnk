@@ -22,3 +22,15 @@ if (filter) {
     });
   });
 }
+
+// Videá v portfóliu sa prehrávajú, len keď sú na obrazovke
+const videa = document.querySelectorAll('video[muted]');
+if (videa.length && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver((zaznamy) => {
+    zaznamy.forEach((z) => {
+      const v = z.target;
+      if (z.isIntersecting && !v.closest('[hidden]')) { v.play().catch(() => {}); } else { v.pause(); }
+    });
+  }, { threshold: 0.4 });
+  videa.forEach((v) => io.observe(v));
+}

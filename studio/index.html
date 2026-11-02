@@ -49,11 +49,11 @@
         </div>
       </div>
     </div>
-    <div style="flex:1 1 360px;min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:end">
-      <div class="foto-placeholder" style="aspect-ratio:9/16;background:#3A3A3C;color:var(--tyrkys-svetla)">[Reels 9:16]</div>
+    <div class="studio-hero">
+      <video src="/assets/studio/zoras-ugc-ona.mp4" poster="/assets/studio/zoras-ugc-ona.webp" muted loop playsinline autoplay preload="metadata" aria-label="AI UGC video pre Zoras" style="aspect-ratio:9/16"></video>
       <div class="stack" style="gap:14px">
-        <div class="foto-placeholder" style="aspect-ratio:1/1;background:#3A3A3C;color:var(--tyrkys-svetla)">[AI avatar]</div>
-        <div class="foto-placeholder" style="aspect-ratio:4/5;background:var(--tyrkys);color:var(--krem)">[Banner]</div>
+        <img src="/assets/studio/mikova-avatar-video.webp" alt="AI avatar kampane Festival Miková" style="aspect-ratio:1/1;object-position:top">
+        <img src="/assets/studio/zoras-banner-trening.webp" alt="Banner Zoras pre Meta" style="aspect-ratio:1/1">
       </div>
     </div>
   </div>
@@ -82,36 +82,120 @@
       <div class="pills" role="group" aria-label="Filter portfólia" data-filter>
         <button type="button" class="pill" aria-pressed="true" data-value="vsetko">Všetko</button>
         <button type="button" class="pill" aria-pressed="false" data-value="statika">Statika</button>
+        <button type="button" class="pill" aria-pressed="false" data-value="tlac">Tlač</button>
         <button type="button" class="pill" aria-pressed="false" data-value="video">Video</button>
         <button type="button" class="pill" aria-pressed="false" data-value="ai">AI</button>
-        <button type="button" class="pill" aria-pressed="false" data-value="ugc">UGC</button>
-        <button type="button" class="pill" aria-pressed="false" data-value="film">Film</button>
+        <button type="button" class="pill" aria-pressed="false" data-value="avatary">AI avatary</button>
       </div>
     </div>
-    <div class="grid" style="--min:240px;gap:28px;align-items:end">
-      <article class="stack" style="gap:10px" data-kat="ai video">
-        <div class="ukazka foto-placeholder" style="aspect-ratio:9/16">[ukážka]</div>
-        <span class="tag">AI s ľudskou úpravou · Video</span>
-        <h3 class="bb" style="font-size:28px">[ArtDentistic: AI avatary]</h3>
-        <p class="muted" style="font-size:14px">[výsledok v kampani]</p>
+    <div class="port">
+      <article class="port__item" data-kat="statika">
+        <img src="/assets/studio/zoras-banner-vykon.webp" alt="Zoras: záťažové prikrývky" loading="lazy" style="aspect-ratio:1/1">
+        <span class="tag">Statika · Meta</span>
+        <h3 class="bb">Zoras: záťažové prikrývky</h3>
+        <p class="muted">Séria bannerov pre výkonnostnú kampaň, každý motív v štvorci aj 9:16.</p>
       </article>
-      <article class="stack" style="gap:10px" data-kat="film video">
-        <div class="ukazka foto-placeholder" style="aspect-ratio:4/5">[ukážka]</div>
-        <span class="tag">Klasická produkcia · Film</span>
-        <h3 class="bb" style="font-size:28px">[Filmová kampaň]</h3>
-        <p class="muted" style="font-size:14px">[výsledok v kampani]</p>
+      <article class="port__item" data-kat="ai video ugc">
+        <video src="/assets/studio/zoras-ugc-on.mp4" poster="/assets/studio/zoras-ugc-on.webp" muted loop playsinline preload="none" aria-label="Zoras: UGC video bez natáčania" style="aspect-ratio:9/16"></video>
+        <span class="tag">AI s ľudskou úpravou · UGC</span>
+        <h3 class="bb">Zoras: UGC video bez natáčania</h3>
+        <p class="muted">Recenzia v štýle tvorcu, vytvorená s AI a doladená ručne.</p>
       </article>
-      <article class="stack" style="gap:10px" data-kat="statika">
-        <div class="ukazka foto-placeholder" style="aspect-ratio:4/5">[ukážka]</div>
-        <span class="tag">Hybrid · Statika</span>
-        <h3 class="bb" style="font-size:28px">[Bartoš: vianočná kampaň]</h3>
-        <p class="muted" style="font-size:14px">[výsledok v kampani]</p>
+      <article class="port__item" data-kat="tlac">
+        <img src="/assets/studio/mikova-billboard.webp" alt="Festival Miková 2026" loading="lazy" style="aspect-ratio:2/1">
+        <span class="tag">Tlač · Billboard</span>
+        <h3 class="bb">Festival Miková 2026</h3>
+        <p class="muted">Kľúčový vizuál festivalu od billboardu po sociálne siete.</p>
       </article>
-      <article class="stack" style="gap:10px" data-kat="ugc video">
-        <div class="ukazka foto-placeholder" style="aspect-ratio:9/16">[ukážka]</div>
-        <span class="tag">Klasická produkcia · UGC</span>
-        <h3 class="bb" style="font-size:28px">[Klient]</h3>
-        <p class="muted" style="font-size:14px">[výsledok v kampani]</p>
+      <article class="port__item" data-kat="ai avatary video">
+        <video src="/assets/studio/mikova-avatar-video.mp4" poster="/assets/studio/mikova-avatar-video.webp" muted loop playsinline preload="none" aria-label="Festival Miková: tvár kampane" style="aspect-ratio:9/16"></video>
+        <span class="tag">AI avatar · Video</span>
+        <h3 class="bb">Festival Miková: tvár kampane</h3>
+        <p class="muted">Z kľúčového vizuálu sme vytvorili avatar, ktorý máva, tancuje a pozýva.</p>
+      </article>
+      <article class="port__item" data-kat="statika">
+        <img src="/assets/studio/zoras-banner-mama.webp" alt="Zoras: detská prikrývka" loading="lazy" style="aspect-ratio:1/1">
+        <span class="tag">Statika · Meta</span>
+        <h3 class="bb">Zoras: detská prikrývka</h3>
+        <p class="muted">Iný uhol pre iné publikum, rovnaký produkt.</p>
+      </article>
+      <article class="port__item" data-kat="ai video">
+        <video src="/assets/studio/zoras-ai-spanok.mp4" poster="/assets/studio/zoras-ai-spanok.webp" muted loop playsinline preload="none" aria-label="Zoras: produktová scéna" style="aspect-ratio:16/9"></video>
+        <span class="tag">AI video</span>
+        <h3 class="bb">Zoras: produktová scéna</h3>
+        <p class="muted">Spánková scéna bez štúdia, modelky a kulís.</p>
+      </article>
+      <article class="port__item" data-kat="tlac">
+        <img src="/assets/studio/mikova-program.webp" alt="Festival Miková: program" loading="lazy" style="aspect-ratio:5/7">
+        <span class="tag">Tlač · Plagát A1</span>
+        <h3 class="bb">Festival Miková: program</h3>
+        <p class="muted">Plagát A1 v jednotnom vizuálnom štýle festivalu.</p>
+      </article>
+      <article class="port__item" data-kat="ai avatary">
+        <img src="/assets/studio/avatar-lekarka.webp" alt="Avatar lekárky" loading="lazy" style="aspect-ratio:12/5">
+        <span class="tag">AI avatar</span>
+        <h3 class="bb">Avatar lekárky</h3>
+        <p class="muted">Jedna tvár v rôznych emóciách pre edukatívne videá kliniky.</p>
+      </article>
+      <article class="port__item" data-kat="statika">
+        <img src="/assets/studio/zoras-post-adhd.webp" alt="Zoras: obsahové posty" loading="lazy" style="aspect-ratio:3/4">
+        <span class="tag">Statika · Post</span>
+        <h3 class="bb">Zoras: obsahové posty</h3>
+        <p class="muted">Edukatívne posty, ktoré budujú dôveru pred predajom.</p>
+      </article>
+      <article class="port__item" data-kat="ai video ugc">
+        <video src="/assets/studio/zoras-ugc-ona2.mp4" poster="/assets/studio/zoras-ugc-ona2.webp" muted loop playsinline preload="none" aria-label="Zoras: rôzne tváre, jeden produkt" style="aspect-ratio:9/16"></video>
+        <span class="tag">AI s ľudskou úpravou · UGC</span>
+        <h3 class="bb">Zoras: rôzne tváre, jeden produkt</h3>
+        <p class="muted">Viac verzií videa na testovanie publík.</p>
+      </article>
+      <article class="port__item" data-kat="tlac">
+        <img src="/assets/studio/montessori-bus.webp" alt="Súkromná ZŠ a MŠ Marie Montessori" loading="lazy" style="aspect-ratio:5/2">
+        <span class="tag">Tlač · Reklama na MHD</span>
+        <h3 class="bb">Súkromná ZŠ a MŠ Marie Montessori</h3>
+        <p class="muted">Plagát na autobus pre kampaň zápisu.</p>
+      </article>
+      <article class="port__item" data-kat="ai video">
+        <video src="/assets/studio/auto-ai.mp4" poster="/assets/studio/auto-ai.webp" muted loop playsinline preload="none" aria-label="Darex: interiér auta" style="aspect-ratio:16/9"></video>
+        <span class="tag">AI video</span>
+        <h3 class="bb">Darex: interiér auta</h3>
+        <p class="muted">Produktové video vozidla vytvorené s AI.</p>
+      </article>
+      <article class="port__item" data-kat="tlac">
+        <img src="/assets/studio/rethink-obal.webp" alt="ReThink 26" loading="lazy" style="aspect-ratio:6/7">
+        <span class="tag">Tlač · Identita podujatia</span>
+        <h3 class="bb">ReThink 26</h3>
+        <p class="muted">Tlačové materiály konferencie.</p>
+      </article>
+      <article class="port__item" data-kat="ai avatary statika">
+        <img src="/assets/studio/mikova-avatar-sutaz.webp" alt="Festival Miková: súťaž" loading="lazy" style="aspect-ratio:3/4">
+        <span class="tag">AI avatar · Statika</span>
+        <h3 class="bb">Festival Miková: súťaž</h3>
+        <p class="muted">Avatar nesie celú kampaň aj v statických formátoch.</p>
+      </article>
+      <article class="port__item" data-kat="statika">
+        <img src="/assets/studio/zoras-story-kavy.webp" alt="Zoras: štyri kávy" loading="lazy" style="aspect-ratio:9/16">
+        <span class="tag">Statika · Stories</span>
+        <h3 class="bb">Zoras: štyri kávy</h3>
+        <p class="muted">Jednoduchý nápad pre formát 9:16.</p>
+      </article>
+      <article class="port__item" data-kat="ai avatary">
+        <img src="/assets/studio/avatar-hana.webp" alt="Avatar pre osobnú značku" loading="lazy" style="aspect-ratio:1/1">
+        <span class="tag">AI avatar · Osobná značka</span>
+        <h3 class="bb">Avatar pre osobnú značku</h3>
+        <p class="muted">Digitálne dvojča pre videá, keď nie je čas na natáčanie.</p>
+      </article>
+      <article class="port__item" data-kat="tlac">
+        <img src="/assets/studio/akm-event.webp" alt="AKM: materiály na podujatie" loading="lazy" style="aspect-ratio:2/3">
+        <span class="tag">Tlač · Event</span>
+        <h3 class="bb">AKM: materiály na podujatie</h3>
+        <p class="muted">Tlačené materiály pripravené na event.</p>
+      </article>
+      <article class="port__item" data-kat="ai video">
+        <video src="/assets/studio/zoras-ai-detail.mp4" poster="/assets/studio/zoras-ai-detail.webp" muted loop playsinline preload="none" aria-label="Zoras: detail materiálu" style="aspect-ratio:9/16"></video>
+        <span class="tag">AI video</span>
+        <h3 class="bb">Zoras: detail materiálu</h3>
+        <p class="muted">Krátky AI záber, ktorý ukáže, čo je vo vnútri prikrývky.</p>
       </article>
     </div>
   </div>
