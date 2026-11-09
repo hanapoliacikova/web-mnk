@@ -8,16 +8,8 @@ if (toggle && menu) {
   });
 }
 
-// Zoradenie portfólia podľa formátu: rovnaké formáty idú spolu, aby boli v riadku zarovnané.
-// Funguje automaticky aj pre nové položky: formát sa zistí z width/height (alebo z načítaného obrázka).
-const FORMATY = [
-  { id: 'vyska-9-16', ar: 9 / 16, od: 0, do: 0.62, min: '200px' },
-  { id: 'vyska-4-5', ar: 4 / 5, od: 0.62, do: 0.9, min: '220px' },
-  { id: 'stvorec', ar: 1, od: 0.9, do: 1.15, min: '220px' },
-  { id: 'sirka-3-2', ar: 3 / 2, od: 1.15, do: 1.65, min: '300px' },
-  { id: 'sirka-16-9', ar: 16 / 9, od: 1.65, do: 1.9, min: '300px' },
-  { id: 'panorama', ar: 5 / 2, od: 1.9, do: Infinity, min: '420px' },
-];
+// Portfólio v MNK Studiu: jeden vodorovný pás. Všetky položky majú rovnakú výšku,
+// šírka sa dopočíta z pomeru strán (width/height alebo načítaný obrázok), takže sú zarovnané zhora aj zdola.
 const port = document.querySelector('.port');
 function pomerMedia(el) {
   const w = +el.getAttribute('width'), h = +el.getAttribute('height');
@@ -31,53 +23,30 @@ function pomerMedia(el) {
     i.src = src;
   });
 }
-function zoskupPortfolio() {
-  if (!port) return Promise.resolve();
-  const polozky = [...port.querySelectorAll(':scope > .port__item')];
-  return Promise.all(polozky.map((it) => {
+if (port) {
+  port.querySelectorAll('.port__item').forEach((it) => {
     const m = it.querySelector('img, video');
-    return m ? pomerMedia(m) : Promise.resolve(1);
-  })).then((pomery) => {
-    const skupiny = FORMATY.map((f) => {
-      const g = document.createElement('div');
-      g.className = 'port__group';
-      g.dataset.format = f.id;
-      g.style.setProperty('--min', f.min);
-      g.style.setProperty('--ar', String(f.ar));
-      return g;
-    });
-    polozky.forEach((it, i) => {
-      const r = pomery[i];
-      const k = FORMATY.findIndex((f) => r >= f.od && r < f.do);
-      const f = FORMATY[k];
-      // Ak sa skutočný pomer líši od rámu o viac ako 4 %, obsah sa neoreže, ale zmestí celý.
-      it.classList.toggle('is-contain', Math.abs(r / f.ar - 1) > 0.04);
-      const m = it.querySelector('img, video');
-      if (m) m.style.removeProperty('aspect-ratio');
-      skupiny[k].appendChild(it);
-    });
-    skupiny.forEach((g) => { if (g.children.length) port.appendChild(g); });
-    port.classList.add('is-grouped');
+    if (!m) return;
+    m.style.removeProperty('aspect-ratio');
+    pomerMedia(m).then((r) => it.style.setProperty('--r', String(Math.min(Math.max(r, 0.5), 2.4))));
   });
+  document.querySelectorAll('.port-sipka').forEach((b) => b.addEventListener('click', () => {
+    port.scrollBy({ left: +b.dataset.smer * port.clientWidth * 0.8, behavior: 'smooth' });
+  }));
 }
-const zoskupene = zoskupPortfolio();
 
-// Filter portfólia v MNK Studiu
+// Filter portfólia
 const filter = document.querySelector('[data-filter]');
-if (filter) {
+if (filter && port) {
   filter.addEventListener('click', (e) => {
     const btn = e.target.closest('button');
     if (!btn) return;
     filter.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
     const kat = btn.dataset.value;
-    zoskupene.then(() => {
-      document.querySelectorAll('[data-kat]').forEach((it) => {
-        it.hidden = kat !== 'vsetko' && !it.dataset.kat.split(' ').includes(kat);
-      });
-      document.querySelectorAll('.port__group').forEach((g) => {
-        g.hidden = !g.querySelector('.port__item:not([hidden])');
-      });
+    port.querySelectorAll('[data-kat]').forEach((it) => {
+      it.hidden = kat !== 'vsetko' && !it.dataset.kat.split(' ').includes(kat);
     });
+    port.scrollTo({ left: 0 });
   });
 }
 
