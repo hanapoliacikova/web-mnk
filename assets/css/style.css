@@ -307,3 +307,5 @@ img.plagat { width: 100%; height: auto; object-fit: contain; display: block; }
 .logo-rad li + li { border-left: 1px solid var(--linka); }
 .logo-rad img { height: 56px; width: auto; max-width: 100%; object-fit: contain; }
 @media (max-width: 640px) { .logo-rad li { padding: 20px 10px; } .logo-rad img { height: 36px; } }
+.ai-ukazka { display: grid; grid-template-columns: minmax(0,506fr) minmax(0,250fr); gap: 16px; align-items: start; }
+@media (max-width: 640px) { .ai-ukazka { grid-template-columns: 1fr; } .ai-ukazka figure:last-child { max-width: 260px; } }
