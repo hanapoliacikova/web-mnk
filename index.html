@@ -242,9 +242,12 @@
       <p><b><a href="mailto:chcem@marketingnakluc.sk">chcem@marketingnakluc.sk</a><br><a href="tel:+421911239151">+421 911 239 151</a></b></p>
     </div>
   </div>
-  <form class="form" name="kontakt" method="POST" action="/dakujeme/" data-netlify="true" netlify-honeypot="firma-web" style="flex:1 1 420px;min-width:0">
-    <input type="hidden" name="form-name" value="kontakt">
-    <p class="hidden"><label>Nevypĺňajte <input name="firma-web"></label></p>
+  <form class="form" name="kontakt" method="POST" action="https://api.web3forms.com/submit" style="flex:1 1 420px;min-width:0">
+    <input type="hidden" name="access_key" value="7f5c7719-f6d0-4609-8862-d80265c2ec4d">
+    <input type="hidden" name="subject" value="Nový dopyt z webu marketingnakluc.sk">
+    <input type="hidden" name="from_name" value="Web Marketing na kľúč">
+    <input type="hidden" name="redirect" value="https://marketingnakluc.sk/dakujeme/">
+    <p class="hidden"><label>Nevypĺňajte <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off"></label></p>
     <label>Meno a firma<input type="text" name="meno" autocomplete="name" required></label>
     <label>E-mail alebo telefón<input type="text" name="kontakt" autocomplete="email" required></label>
     <label>S čím vám môžeme pomôcť<textarea name="sprava" rows="4"></textarea></label>
