@@ -106,6 +106,7 @@ for sk_f, cz_f, sk_url, cz_url in PAGES:
     for a, b in LINKS.items():
         cz = cz.replace('href="%s' % a, 'href="%s' % b)
     cz = cz.replace(SK + '/assets/', CZ + '/assets/')
+    cz = cz.replace('/assets/img/logo.png', '/assets/img/logo-cz.png').replace('/assets/img/logo-biele.png', '/assets/img/logo-cz-biele.png')
     cz = cz.replace('value="%s/dakujeme/"' % SK, 'value="%s/dekujeme/"' % CZ)
     if 'kalkulacka' in sk_f:
         for a, b in KALK:
