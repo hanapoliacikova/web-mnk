@@ -61,3 +61,15 @@ if (videa.length && 'IntersectionObserver' in window) {
   }, { threshold: 0.4 });
   videa.forEach((v) => io.observe(v));
 }
+
+// Pohyblivý pás plagátov: obsah sa zdvojí, aby pás bežal plynulo dokola
+document.querySelectorAll('[data-pas] .pas__track').forEach((t) => {
+  const povodne = [...t.children];
+  povodne.forEach((el) => {
+    const k = el.cloneNode(true);
+    k.setAttribute('aria-hidden', 'true');
+    k.querySelectorAll('img').forEach((i) => { i.alt = ''; });
+    t.appendChild(k);
+  });
+  t.style.setProperty('--pas-cas', povodne.length * 7 + 's');
+});
