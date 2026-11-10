@@ -302,3 +302,5 @@ img.plagat { width: 100%; height: auto; object-fit: contain; display: block; }
 @media (max-width: 700px) { .pas__item { width: 150px; } .pas__track { gap: 16px; } }
 @media (prefers-reduced-motion: reduce) { .pas { overflow-x: auto; -webkit-mask-image: none; mask-image: none; } .pas__track { animation: none; } .pas__track [aria-hidden] { display: none; } }
 .pas img.plagat { aspect-ratio: 707 / 1000; object-fit: cover; background: none; }
+.logo-box { background: #fff; padding: 20px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px; align-self: flex-start; }
+.logo-box img { width: auto; max-width: 100%; display: block; }
