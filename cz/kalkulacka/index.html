@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kalkulačka ROAS | Marketing na klíč</title>
+  <meta name="description" content="Zjistěte, jestli vaše reklama vydělává: bod zvratu ROAS, tržby z reklamy a příspěvek na zisk.">
+  <meta property="og:title" content="Kalkulačka ROAS | Marketing na klíč">
+  <meta property="og:description" content="Zjistěte, jestli vaše reklama vydělává: bod zvratu ROAS, tržby z reklamy a příspěvek na zisk.">
+  <meta property="og:image" content="https://marketingnaklic.cz/assets/img/tim-stol.webp">
+  <link rel="canonical" href="https://marketingnaklic.cz/kalkulacka/">
+  <link rel="alternate" hreflang="sk" href="https://marketingnakluc.sk/kalkulacka/">
+  <link rel="alternate" hreflang="cs" href="https://marketingnaklic.cz/kalkulacka/">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicon-192.png">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/assets/css/style.css?v=20261110i">
+  <script src="/assets/js/main.js?v=20261110i" defer></script>
+</head>
+<body>
+<a class="skip" href="#obsah">Přeskočit na obsah</a>
+<header class="site-header">
+  <nav class="nav wrap" aria-label="Hlavní menu">
+    <a class="nav__logo" href="/" aria-label="Marketing na klíč, domů"><img src="/assets/img/logo.png" alt="Marketing na klíč" width="110" height="44"></a>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="nav__menu" id="menu">
+      <div class="nav__links">
+        <a href="/#sluzby">Služby</a>
+        <a href="/jak-pracujeme-s-ai/">Jak pracujeme s AI</a>
+        <a href="/studio/">MNK Studio</a>
+        <a href="/filmovy-marketing/">Filmový marketing</a>
+        <a href="/tym/">Tým</a>
+        <a href="/#referencie">Reference</a>
+      </div>
+      <a class="nav__lang" href="https://marketingnakluc.sk/kalkulacka/" hreflang="sk" lang="sk" title="Slovenská verzia">SK</a>
+      <a class="btn nav__cta" href="/#kontakt">Domluvit konzultaci</a>
+    </div>
+  </nav>
+</header>
+<main id="obsah">
+<style>
+:root{--bg:var(--krem);--surface:#FFFFFF;--muted:var(--seda);--line:#D7DCDA;--accent:var(--petrol);--accent-2:var(--tyrkys);--on-accent:var(--krem);--plus:#1F7A4C;--plus-bg:#DDF0E5;--minus:#B3432E;--minus-bg:#F6E0DA;--display:"Bebas Neue",Impact,"Arial Narrow",sans-serif;--body:"Inter",system-ui,sans-serif}
+.k-wrap{max-width:1040px;display:flex;flex-direction:column;gap:40px}
+h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.01em;line-height:.92;margin:0;text-wrap:balance}
+h1{font-size:clamp(48px,7vw,84px)}
+h2{font-size:clamp(30px,3.6vw,40px)}
+p{margin:0;max-width:66ch}
+.k-brand{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.k-barbox{display:flex;gap:clamp(16px,2.4vw,28px)}
+.k-barbox::before{content:"";flex:0 0 10px;background:var(--accent)}
+.k-barbox>div{display:flex;flex-direction:column;gap:14px;min-width:0}
+.k-lead{font-size:clamp(16px,1.6vw,18px);color:var(--muted)}
+.k-hl{color:var(--accent)}
+.k-main{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px}
+.k-panel{background:var(--mata);padding:24px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.k-panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.k-example{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--accent);color:var(--on-accent);padding:4px 9px}
+.k-field{display:flex;flex-direction:column;gap:6px}
+.k-field label{font-weight:600;font-size:.92rem}
+.k-field .k-hint{font-size:.82rem;color:var(--muted)}
+.k-inp{display:flex;align-items:stretch;border:1px solid var(--line);background:var(--surface)}
+.k-inp:focus-within{outline:2px solid var(--accent-2);outline-offset:1px}
+.k-inp input{flex:1;min-width:0;font:inherit;font-size:1.25rem;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink);background:transparent;border:0;padding:10px 12px;outline:none}
+.k-inp span{display:flex;align-items:center;padding:0 12px;color:var(--muted);font-weight:600;border-left:1px solid var(--line)}
+button{font:inherit;font-size:.9rem;font-weight:600;color:var(--ink);background:transparent;border:0;border-bottom:2px solid currentColor;padding:2px 0;cursor:pointer;align-self:flex-start}
+button:hover,button:focus-visible{color:var(--accent);outline:none}
+.k-results{display:flex;flex-direction:column;gap:0;border-top:2px solid var(--ink);min-width:0}
+.k-res{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.k-res .k-l{font-weight:600}
+.k-res .k-l small{display:block;font-weight:400;color:var(--muted);font-size:.82rem}
+.k-res .k-v{font-family:var(--display);font-size:clamp(40px,5vw,56px);line-height:.9;font-variant-numeric:tabular-nums;color:var(--accent)}
+.k-res .k-v.k-plus{color:var(--plus)} .k-res .k-v.k-minus{color:var(--minus)}
+.k-verdict{display:flex;align-items:center;gap:14px;padding:18px 0;flex-wrap:wrap}
+.k-pill{font-family:var(--display);font-size:30px;line-height:1;padding:8px 16px 6px;letter-spacing:.03em}
+.k-pill.k-plus{background:var(--plus-bg);color:var(--plus)}
+.k-pill.k-minus{background:var(--minus-bg);color:var(--minus)}
+.k-pill.k-zero{background:var(--mata-2);color:var(--ink)}
+.k-verdict p{color:var(--muted);font-size:.92rem;flex:1;min-width:200px}
+/* stupnica */
+.k-scale{display:flex;flex-direction:column;gap:14px}
+.k-track-wrap{position:relative;padding:58px 0 34px}
+.k-track{position:relative;height:18px;display:flex}
+.k-track .k-lose{background:var(--minus-bg)}
+.k-track .k-win{background:var(--plus-bg);flex:1}
+.k-mark{position:absolute;top:0;bottom:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.k-mark .k-tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;padding:3px 8px}
+.k-mark .k-line{width:3px;flex:1}
+.k-mark.k-be .k-tag{background:var(--ink);color:var(--bg)} .k-mark.k-be .k-line{background:var(--ink)}
+.k-mark.k-cl .k-tag{background:var(--accent);color:var(--on-accent)} .k-mark.k-cl .k-line{background:var(--accent)}
+.k-mark.k-cl{top:auto;bottom:0;height:78px;flex-direction:column-reverse}
+.k-mark.k-be{height:78px}
+.k-ticks{position:relative;height:18px;margin-top:6px;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.k-ticks span{position:absolute;transform:translateX(-50%)}
+.k-legend{display:flex;gap:20px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.k-legend i{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:6px}
+.k-how{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:18px 32px;border-top:1px solid var(--line);padding-top:20px;font-size:.92rem;color:var(--muted)}
+.k-how b{color:var(--ink);display:block;margin-bottom:4px}
+code{font-size:.9em;background:var(--mata-2);color:var(--ink);padding:1px 6px}
+footer{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.k-mark{transition:left .25s ease}.k-track .k-lose{transition:width .25s ease}}
+</style>
+<div class="wrap section k-wrap">
+  <header class="k-barbox"><div>
+    <p class="eyebrow">Kalkulačka ROAS</p>
+    <h1>Vydělává vaše reklama, <span class="k-hl">nebo jen utrácí?</span></h1>
+    <p class="k-lead">Zadejte hrubou marži, měsíční rozpočet na reklamu a ROAS, kterou očekáváte. Hned uvidíte, od jaké ROAS reklama začíná vydělávat a kolik vám přinese na zisku.</p>
+  </div></header>
+
+  <div class="k-main">
+    <form class="k-panel" id="form" novalidate>
+      <div class="k-panel-head"><h2>Vaše čísla</h2><span class="k-example" id="ex-badge">Příklad: e-shop</span></div>
+      <div class="k-field">
+        <label for="marza">Hrubá marže</label>
+        <div class="k-inp"><input id="marza" type="number" inputmode="decimal" min="1" max="100" step="1" value="40"><span>%</span></div>
+        <span class="k-hint">Kolik z prodejní ceny vám zůstane po odečtení nákladů na zboží, bez DPH.</span>
+      </div>
+      <div class="k-field">
+        <label for="rozpocet">Měsíční rozpočet na reklamu</label>
+        <div class="k-inp"><input id="rozpocet" type="number" inputmode="decimal" min="0" step="50" value="1000"><span>€</span></div>
+        <span class="k-hint">Kolik měsíčně zaplatíte za reklamu na Meta, Google a dalších.</span>
+      </div>
+      <div class="k-field">
+        <label for="roas">Očekávaná ROAS</label>
+        <div class="k-inp"><input id="roas" type="number" inputmode="decimal" min="0" step="0.1" value="3"><span>×</span></div>
+        <span class="k-hint">Kolik eur tržeb přinese 1 euro v reklamě. ROAS 3 = z 1 € jsou 3 € tržeb.</span>
+      </div>
+      <button type="button" id="reset">Vrátit příklad</button>
+    </form>
+
+    <section class="k-results" aria-live="polite">
+      <div class="k-res"><span class="k-l">Bod zvratu ROAS<small>1 ÷ marže. Pod touto hodnotou reklama prodělává.</small></span><span class="k-v" id="r-be">2,50×</span></div>
+      <div class="k-res"><span class="k-l">Tržby z reklamy<small>rozpočet × ROAS, měsíčně</small></span><span class="k-v" id="r-trzby">3 000 €</span></div>
+      <div class="k-res"><span class="k-l">Příspěvek na zisk<small>tržby × marže − rozpočet, měsíčně</small></span><span class="k-v" id="r-zisk">200 €</span></div>
+      <div class="k-verdict"><span class="k-pill k-plus" id="r-pill">Vydělává</span><p id="r-text"></p></div>
+    </section>
+  </div>
+
+  <section class="k-scale" aria-label="Stupnice ROAS">
+    <h2>Kde jste na stupnici ROAS</h2>
+    <div class="k-track-wrap">
+      <div class="k-mark k-be" id="m-be"><span class="k-tag" id="m-be-t">Bod zvratu</span><span class="k-line"></span></div>
+      <div class="k-track"><div class="k-lose" id="t-lose"></div><div class="k-win"></div></div>
+      <div class="k-mark k-cl" id="m-cl"><span class="k-tag" id="m-cl-t">Váš odhad</span><span class="k-line"></span></div>
+    </div>
+    <div class="k-ticks" id="ticks"></div>
+    <div class="k-legend"><span><i style="background:var(--minus-bg)"></i>Reklama prodělává</span><span><i style="background:var(--plus-bg)"></i>Reklama vydělává</span></div>
+  </section>
+
+  <section class="k-how">
+    <div><b>Co je ROAS</b>Návratnost výdajů na reklamu: tržby, které reklama přinesla, dělené tím, co stála.</div>
+    <div><b>Proč bod zvratu</b>Při marži 40 % vám z každého eura tržeb zůstane 40 centů. Abyste zaplatili 1 € reklamy, potřebujete aspoň 2,50 € tržeb.</div>
+    <div><b>Co kalkulačka neřeší</b>Fixní náklady, vrácení zboží a opakované nákupy. Zákazník, který se vrátí, může ztrátovou kampaň obrátit na ziskovou.</div>
+  </section>
+
+  <p class="muted" style="font-size:14px">Orientační výpočet. Zadávejte čísla bez DPH.</p>
+  <div class="actions"><a class="btn" href="/#kontakt">Probrat výsledek s námi</a><a class="btn-line" href="/studio/#baliky">Balíčky kreativ pro Meta Ads</a></div>
+</div>
+
+
+<script>
+(function(){
+  var EX={marza:40,rozpocet:1000,roas:3};
+  var $=function(id){return document.getElementById(id)};
+  var ids=['marza','rozpocet','roas'];
+  var eur=new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0});
+  var dec=new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2});
+  function num(id){var n=parseFloat(String($(id).value).replace(',','.'));return isFinite(n)&&n>=0?n:0}
+  function isExample(){return ids.every(function(id){return num(id)===EX[id]})}
+  function calc(){
+    var m=Math.min(num('marza'),100)/100, b=num('rozpocet'), r=num('roas');
+    var be=m>0?1/m:Infinity;
+    var trzby=b*r, zisk=trzby*m-b;
+    $('r-be').textContent=isFinite(be)?dec.format(be)+'×':'–';
+    $('r-trzby').textContent=eur.format(trzby)+' €';
+    var z=$('r-zisk'); z.textContent=(zisk>0?'+':zisk<0?'−':'')+eur.format(Math.abs(zisk))+' €';
+    z.className='k-v '+(zisk>0.5?'k-plus':zisk<-0.5?'k-minus':'');
+    var pill=$('r-pill'), t=$('r-text');
+    if(!isFinite(be)){pill.className='k-pill k-minus';pill.textContent='Prodělává';t.textContent='Bez marže reklama nemůže vydělat.'}
+    else if(Math.abs(r-be)<0.005){pill.className='k-pill k-zero';pill.textContent='Na nule';t.textContent='Reklama se přesně zaplatí, ale nic nevydělá.'}
+    else if(r>be){pill.className='k-pill k-plus';pill.textContent='Vydělává';t.textContent='Vaše ROAS je o '+dec.format(r-be)+' nad bodem zvratu. Každé euro v reklamě vám vrátí '+dec.format(r*m)+' € hrubého zisku.'}
+    else{pill.className='k-pill k-minus';pill.textContent='Prodělává';t.textContent='Chybí '+dec.format(be-r)+' ROAS do bodu zvratu. Každé euro v reklamě vám vrátí jen '+dec.format(r*m)+' € hrubého zisku.'}
+    // stupnica
+    var beV=isFinite(be)?be:10;
+    var max=Math.max(5,beV*1.6,r*1.2);
+    var step=max<=6?1:max<=12?2:max<=30?5:10;
+    max=Math.ceil(max/step)*step;
+    var pct=function(v){return Math.min(Math.max(v/max*100,0),100)};
+    $('t-lose').style.width=pct(beV)+'%';
+    $('m-be').style.left=pct(beV)+'%';
+    $('m-cl').style.left=pct(r)+'%';
+    $('m-be-t').textContent='Bod zvratu '+(isFinite(be)?dec.format(be):'–');
+    $('m-cl-t').textContent='Váš odhad '+dec.format(r);
+    // nedovoliť štítkom vyjsť mimo
+    [['m-be',beV],['m-cl',r]].forEach(function(p){var el=$(p[0]),x=pct(p[1]);el.style.transform='translateX('+(x<8?'-'+(x/8*50):x>92?'-'+(50+(x-92)/8*50):'-50')+'%)'});
+    var ticks=$('ticks'); ticks.innerHTML='';
+    for(var v=0;v<=max+1e-9;v+=step){var s=document.createElement('span');s.style.left=pct(v)+'%';s.textContent=v+'×';if(v===0)s.style.transform='none';if(Math.abs(v-max)<1e-9)s.style.transform='translateX(-100%)';ticks.appendChild(s)}
+    $('ex-badge').hidden=!isExample();
+  }
+  ids.forEach(function(id){$(id).addEventListener('input',calc)});
+  $('form').addEventListener('submit',function(e){e.preventDefault()});
+  $('reset').addEventListener('click',function(){ids.forEach(function(id){$(id).value=EX[id]});calc()});
+  calc();
+})();
+</script>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <img src="/assets/img/logo-biele.png" alt="Marketing na klíč" width="130" height="52">
+    <p>Karpatské námestie 10A, 831 06 Bratislava &nbsp;·&nbsp; IČO 50366335 &nbsp;·&nbsp; <a href="mailto:chcem@marketingnakluc.sk">chcem@marketingnakluc.sk</a> &nbsp;·&nbsp; <a href="tel:+421911239151">+421 911 239 151</a></p>
+  </div>
+</footer>
+</body>
+</html>

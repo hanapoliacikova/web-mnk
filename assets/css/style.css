@@ -310,3 +310,5 @@ img.plagat { width: 100%; height: auto; object-fit: contain; display: block; }
 .ai-ukazka { display: grid; grid-template-columns: minmax(0,300fr) minmax(0,506fr) minmax(0,250fr); gap: 16px; align-items: start; }
 @media (max-width: 960px) { .ai-ukazka { grid-template-columns: minmax(0,506fr) minmax(0,250fr); } .ai-ukazka__krok { grid-column: 1 / -1; } }
 @media (max-width: 640px) { .ai-ukazka { grid-template-columns: 1fr; } .ai-ukazka figure:last-child { max-width: 260px; } }
+.nav__lang { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-decoration: none; border: 1.5px solid currentColor; border-radius: 4px; padding: 4px 8px; line-height: 1; }
+.nav__lang:hover { color: var(--petrol); }

@@ -32,3 +32,13 @@ Pripravené pre Netlify (`netlify.toml`, kontaktný formulár cez Netlify Forms)
 ## Písma a logo
 
 Nadpisy Bebas Neue, text Inter (Google Fonts). Logo je obrázok, písmo loga (Coves) má len osobnú licenciu a na webe sa ako font nepoužíva.
+
+## Česká verzia (marketingnaklic.cz)
+
+Česká verzia je v priečinku `/cz` a generuje sa zo slovenských stránok:
+
+```
+python3 tools/cz/build.py
+```
+
+Preklady sú v `tools/cz/preklad.json`. Po každej zmene slovenského textu doplň preklad a spusti skript znova. Text bez prekladu skript vypíše a v českej verzii ostane po slovensky. Doména marketingnaklic.cz sa na `/cz` mapuje v `netlify.toml`.

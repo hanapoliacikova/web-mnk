@@ -75,21 +75,22 @@ document.querySelectorAll('[data-pas] .pas__track').forEach((t) => {
 });
 
 // Kontaktný formulár: odoslanie cez Web3Forms na pozadí, potom vlastná stránka Ďakujeme
+var jeCZ = document.documentElement.lang === 'cs';
 document.querySelectorAll('form[action*="web3forms"]').forEach(function (f) {
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     var btn = f.querySelector('[type="submit"]');
     var txt = btn ? btn.textContent : '';
-    if (btn) { btn.disabled = true; btn.textContent = 'Odosielam…'; }
+    if (btn) { btn.disabled = true; btn.textContent = jeCZ ? 'Odesílám…' : 'Odosielam…'; }
     fetch(f.action, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(f) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (d && d.success) { window.location.href = '/dakujeme/'; }
+        if (d && d.success) { window.location.href = jeCZ ? '/dekujeme/' : '/dakujeme/'; }
         else { throw new Error(d && d.message); }
       })
       .catch(function () {
         if (btn) { btn.disabled = false; btn.textContent = txt; }
-        alert('Správu sa nepodarilo odoslať. Skúste to prosím znova alebo nám napíšte na chcem@marketingnakluc.sk.');
+        alert(jeCZ ? 'Zprávu se nepodařilo odeslat. Zkuste to prosím znovu nebo nám napište na chcem@marketingnakluc.sk.' : 'Správu sa nepodarilo odoslať. Skúste to prosím znova alebo nám napíšte na chcem@marketingnakluc.sk.');
       });
   });
 });

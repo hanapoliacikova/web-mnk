@@ -16,4 +16,29 @@
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
-# Presmerovania zo starého webu doplníme pred spustením
+
+# Česká verzia: doména marketingnaklic.cz servíruje obsah z priečinka /cz
+# Spoločné súbory (obrázky, CSS, JS, favicon) idú z koreňa webu.
+[[redirects]]
+  from = "https://www.marketingnaklic.cz/*"
+  to = "https://marketingnaklic.cz/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://marketingnaklic.cz/assets/*"
+  to = "/assets/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://marketingnaklic.cz/favicon.ico"
+  to = "/favicon.ico"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://marketingnaklic.cz/*"
+  to = "/cz/:splat"
+  status = 200
+  force = true

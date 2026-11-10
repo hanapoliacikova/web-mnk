@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /dekujeme/
+
+Sitemap: https://marketingnaklic.cz/sitemap.xml
