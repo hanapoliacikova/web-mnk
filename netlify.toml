@@ -55,11 +55,8 @@
     X-Robots-Tag = "noindex, nofollow"
     Cache-Control = "public, max-age=0, must-revalidate"
 
-[[redirects]]
-  from = "/schvalovanie/:klient"
-  to = "/schvalovanie/:klient/"
-  status = 301
-
+# Netlify porovnáva adresy s lomkou aj bez nej rovnako, preto stačí jedno pravidlo
+# (samostatné presmerovanie na adresu s lomkou by sa zacyklilo).
 [[redirects]]
   from = "/schvalovanie/:klient/"
   to = "/schvalovanie/_stranka.html"
