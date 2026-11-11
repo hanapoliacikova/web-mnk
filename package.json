@@ -1,0 +1,9 @@
+{
+  "name": "web-mnk",
+  "private": true,
+  "type": "module",
+  "description": "Statický web marketingnakluc.sk. Závislosť je len pre Netlify Function schvaľovania kreatív.",
+  "dependencies": {
+    "@netlify/blobs": "11.1.7"
+  }
+}

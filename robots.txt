@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /dakujeme/
 Disallow: /cz/
+Disallow: /schvalovanie/
 
 Sitemap: https://marketingnakluc.sk/sitemap.xml

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Prehľad schvaľovania | Marketing na kľúč</title>
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/schvalovanie/app.css?v=1">
+  <script src="/schvalovanie/prehlad/prehlad.js?v=1" defer></script>
+</head>
+<body>
+<header class="wrap s-head">
+  <div>
+    <a class="s-logo" href="/" aria-label="Marketing na kľúč"><img src="/assets/img/logo.png" alt="Marketing na kľúč" width="100" height="40"></a>
+    <h1 class="bb s-title">Prehľad schvaľovania</h1>
+    <div class="s-meta">Všetci klienti a ich rozhodnutia na jednom mieste. Len pre tím MNK.</div>
+  </div>
+  <button class="btn" type="button" id="odhlasit" hidden>Odhlásiť</button>
+</header>
+<main class="wrap">
+  <form class="p-login" id="login">
+    <label for="heslo"><b>Heslo tímu</b></label>
+    <input id="heslo" type="password" autocomplete="current-password" required>
+    <button class="btn primary" type="submit">Zobraziť prehľad</button>
+    <div class="s-msg" id="sprava" role="status"></div>
+  </form>
+  <section class="p-list" id="zoznam" hidden></section>
+</main>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "klient": "Ukážkový klient",
+  "kampan": "Jesenná kampaň (ukážka)",
+  "kanal": "Meta Ads",
+  "termin": "2026-11-20",
+  "uvod": "Toto je ukážková stránka. Pri každom variante kliknite na Schváliť, alebo na Upraviť a napíšte, čo zmeniť. Vaše rozhodnutia uvidíme hneď.",
+  "varianty": [
+    {
+      "id": "a",
+      "nazov": "Variant A · Benefit",
+      "format": "Feed 4:5",
+      "obrazky": ["a.svg"],
+      "nadpis": "Ušetrite 2 hodiny denne na administratíve",
+      "text": "Faktúry, objednávky a sklad na jednom mieste. Vyskúšajte 14 dní zadarmo, bez karty.",
+      "cta": "Vyskúšať zadarmo"
+    },
+    {
+      "id": "b",
+      "nazov": "Variant B · Príbeh zákazníčky",
+      "format": "Feed 4:5",
+      "obrazky": ["b.svg"],
+      "nadpis": "Ako Petra zrušila papierovanie",
+      "text": "Majiteľka kaviarne s troma zamestnancami. Odkedy používa aplikáciu, uzávierku robí za 15 minút.",
+      "cta": "Prečítať príbeh"
+    },
+    {
+      "id": "c",
+      "nazov": "Variant C · Ponuka (karusel)",
+      "format": "Karusel 4:5",
+      "obrazky": ["c1.svg", "c2.svg"],
+      "nadpis": "Ročné predplatné o 30 % lacnejšie",
+      "text": "Akcia platí do nedele. Stačí sa zaregistrovať.",
+      "cta": "Získať zľavu"
+    },
+    {
+      "id": "d",
+      "nazov": "Variant D · Otázka",
+      "format": "Feed 4:5",
+      "obrazky": ["d.svg"],
+      "nadpis": "Koľko hodín týždenne vám zje papierovanie?",
+      "text": "Spočítajte si to za 30 sekúnd v našej kalkulačke.",
+      "cta": "Spočítať"
+    }
+  ]
+}
