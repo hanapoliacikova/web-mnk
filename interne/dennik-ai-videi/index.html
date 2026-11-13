@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Denník AI videí | MNK interné</title>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: MNK web – krémový podklad, Bebas Neue, ľavý petrolejový pruh; zoznam projektov → detail projektu po fázach; prehľad = tabuľky priemerov */
+:root{
+  --bg:#FFFCF9; --surface:#FFFFFF; --mata:#E5EFEF; --mata-2:#D3E3E3;
+  --ink:#262626; --muted:#5A5A5C; --line:#D7D2CB;
+  --petrol:#226D6E; --tyrkys:#2B988F; --accent:#226D6E; --accent-2:#2B988F; --on-accent:#FFFCF9;
+  --ok:#2E7D4F; --warn:#B7791F; --bad:#B23A2E;
+  --display:"Bebas Neue",Impact,"Arial Narrow",sans-serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14302F; --surface:#1F4746; --mata:#1A3D3C; --mata-2:#285655;
+  --ink:#FFFCF9; --muted:#B9CFCF; --line:#35605F;
+  --accent:#7CC8BF; --accent-2:#7CC8BF; --on-accent:#14302F;
+  --ok:#7BC99A; --warn:#E3B45C; --bad:#F08A7E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14302F; --surface:#1F4746; --mata:#1A3D3C; --mata-2:#285655;
+  --ink:#FFFCF9; --muted:#B9CFCF; --line:#35605F;
+  --accent:#7CC8BF; --accent-2:#7CC8BF; --on-accent:#14302F;
+  --ok:#7BC99A; --warn:#E3B45C; --bad:#F08A7E; color-scheme:dark}
+.logo-dark{display:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo-dark{display:block}:root:not([data-theme="light"]) .logo-light{display:none}}
+:root[data-theme="dark"] .logo-dark{display:block}:root[data-theme="dark"] .logo-light{display:none}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 64px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1,h2,.bb{font-family:var(--display);font-weight:400;letter-spacing:.01em;line-height:.92}
+h1{font-size:clamp(48px,7vw,84px)}
+h2{font-size:clamp(34px,4.4vw,52px)}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0;max-width:70ch}
+.muted{color:var(--muted)}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.logos img{height:40px;width:auto}
+header{display:flex;flex-direction:column;gap:24px}
+.barbox{display:flex;gap:clamp(14px,2.4vw,24px)}
+.barbox::before{content:"";flex:0 0 10px;background:var(--accent)}
+.barbox>div{display:flex;flex-direction:column;gap:14px;min-width:0}
+.hl{color:var(--accent)}
+.tabs{display:flex;flex-wrap:wrap;gap:8px 28px;border-bottom:2px solid var(--ink)}
+.tab{font:inherit;font-weight:700;font-size:15px;background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-2px;padding:10px 0;color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+.btn{font:inherit;font-weight:600;background:var(--petrol);color:#FFFCF9;border:0;border-radius:2px;padding:11px 18px;cursor:pointer}
+.btn:hover{filter:brightness(.92)}
+.btn-line{font:inherit;font-weight:600;background:none;color:var(--ink);border:0;border-bottom:2px solid currentColor;padding:2px 0;cursor:pointer}
+.btn-line:hover{color:var(--accent)}
+.btn-line.danger:hover{color:var(--bad)}
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+.status{font-size:13px;color:var(--muted)}
+.banner{background:var(--mata);border-left:6px solid var(--accent-2);padding:12px 16px;font-size:14px}
+/* zoznam */
+.toolbar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.list{border-top:2px solid var(--ink)}
+.item{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.6fr) auto auto;gap:6px 20px;align-items:center;padding:14px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;width:100%;text-align:left;font:inherit;color:inherit}
+.item:hover{background:var(--mata)}
+.item .t{font-weight:700}
+.item .s{font-size:13px;color:var(--muted)}
+.item .h{font-family:var(--display);font-size:28px;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums;text-align:right}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.pill.run{border:1px solid var(--accent-2);color:var(--accent)}
+.pill.done{background:var(--petrol);color:#FFFCF9}
+@media (max-width:640px){.item{grid-template-columns:1fr auto}.item .typ{grid-column:1/-1;order:3}}
+.empty{padding:28px 0;color:var(--muted)}
+/* formulár */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:14px 18px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label,.field .lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+input[type=text],input[type=number],input[type=date],select,textarea{font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:2px;padding:9px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:62px}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+input:disabled,select:disabled,textarea:disabled{opacity:.7}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chipbtn{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--accent);color:var(--accent);background:none;border-radius:999px;padding:4px 11px;cursor:pointer}
+.chipbtn[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.newbox{background:var(--mata);padding:20px;display:flex;flex-direction:column;gap:14px}
+/* detail */
+.dhead{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:18px;border-top:2px solid var(--ink);padding-top:12px}
+.sum .v{font-family:var(--display);font-size:46px;line-height:.9;color:var(--accent);font-variant-numeric:tabular-nums}
+.sum .l{font-size:13px;font-weight:600}
+.block{display:flex;flex-direction:column;gap:14px}
+.phase{background:var(--surface);border-top:6px solid var(--petrol);padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.phase.ai{border-top-color:var(--tyrkys)}
+.phase h3{font-family:var(--display);font-weight:400;font-size:30px;line-height:1;letter-spacing:.01em;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.who{font-family:var(--body);font-size:11px;font-weight:700;letter-spacing:.14em;padding:3px 9px;border-radius:999px;color:#FFFCF9;background:var(--petrol)}
+.phase.ai .who{background:var(--tyrkys)}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px}
+.steps{border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.step .nm{font-size:14px}
+.step .nm b{font-weight:600}
+.step .nm .gate{font-size:10px;font-weight:700;letter-spacing:.1em;background:var(--accent);color:var(--on-accent);padding:1px 6px;margin-right:6px;vertical-align:1px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.seg button{font:inherit;font-size:12px;font-weight:600;background:var(--surface);color:var(--muted);border:0;border-left:1px solid var(--line);padding:5px 10px;cursor:pointer;white-space:nowrap}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"][data-v="nutny"]{background:var(--ok);color:#fff}
+.seg button[aria-pressed="true"][data-v="vynimka"]{background:var(--warn);color:#fff}
+.seg button[aria-pressed="true"][data-v="zbytocny"]{background:var(--bad);color:#fff}
+.seg button:disabled{cursor:default}
+@media (max-width:640px){.step{grid-template-columns:1fr}}
+/* prehľad */
+.tbl{overflow-x:auto;border-top:2px solid var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:10px 12px 10px 0;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;white-space:nowrap}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.n b{font-size:15px}
+.stack{display:flex;height:10px;min-width:120px;background:var(--mata-2);border-radius:1px;overflow:hidden}
+.stack i{display:block;height:100%}
+.stack .a{background:var(--ok)}.stack .b{background:var(--warn)}.stack .c{background:var(--bad)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.legend .a::before{background:var(--ok)}.legend .b::before{background:var(--warn)}.legend .c::before{background:var(--bad)}
+.verdict{font-size:12px;font-weight:700;white-space:nowrap}
+.verdict.core{color:var(--ok)}.verdict.ex{color:var(--warn)}.verdict.cut{color:var(--bad)}
+.filters{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.filters .field{min-width:200px}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>
+.login{max-width:360px;display:flex;flex-direction:column;gap:10px}
+.login input{font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:2px;padding:10px 12px}
+body.locked .tabs,body.locked #view-projekty,body.locked #view-detail,body.locked #view-prehlad{display:none!important}
+body:not(.locked) #login,body.locked #odhlasit{display:none!important}
+</style>
+</head>
+<body class="locked">
+
+<div class="wrap">
+<header>
+  <div class="logos"><img class="logo-light" src="/assets/img/logo.png" alt="Marketing na kľúč" width="100" height="40"><img class="logo-dark" src="/assets/img/logo-biele.png" alt="Marketing na kľúč" width="100" height="40"></div>
+  <div class="barbox"><div>
+    <span class="eyebrow">MNK Studio · tímový denník</span>
+    <h1>Denník <span class="hl">AI videí</span></h1>
+    <p class="muted">Pri každom videu zapíšte skutočné hodiny, kredity a počet verzií po fázach a pri každom kroku označte, či bol nutný, výnimka alebo zbytočný. Prehľad z toho počíta, koľko reálne trvajú rôzne typy videí a ktoré kroky sú naozaj potrebné. Postup je opísaný v dokumente <a href="https://claude.ai/artifact/3sHEECuR4ztxpjQimnffuS" target="_blank" rel="noopener">Proces AI videa</a>.</p>
+  </div></div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-projekty" aria-selected="true">Projekty</button>
+    <button class="tab" role="tab" id="tab-prehlad" aria-selected="false">Prehľad</button>
+  </div>
+</header>
+
+<form id="login" class="login">
+  <label for="heslo"><b>Heslo tímu</b></label>
+  <input id="heslo" type="password" autocomplete="current-password" required>
+  <button class="btn" type="submit">Otvoriť denník</button>
+  <span class="status" id="login-msg" role="status"></span>
+</form>
+<div id="banner" class="banner" hidden></div>
+
+<main id="view-projekty" class="block">
+  <div class="toolbar">
+    <span class="status" id="count">Načítavam projekty…</span>
+    <button class="btn" type="button" id="btn-new">Pridať video</button>
+  </div>
+  <form id="newform" class="newbox" hidden>
+    <h3>Nové video</h3>
+    <div class="form-grid">
+      <div class="field"><label for="n-klient">Klient</label><input type="text" id="n-klient" required placeholder="napr. ArtDentistic"></div>
+      <div class="field"><label for="n-nazov">Názov videa</label><input type="text" id="n-nazov" required placeholder="napr. Bolesť zuba"></div>
+      <div class="field"><label for="n-datum">Začiatok</label><input type="date" id="n-datum"></div>
+      <div class="field"><label for="n-zalozil">Založil(a)</label><input type="text" id="n-zalozil" placeholder="vaše meno"></div>
+    </div>
+    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap"><button class="btn" type="submit">Vytvoriť</button><button class="btn-line" type="button" id="n-cancel">Zrušiť</button><span class="status" id="n-msg"></span></div>
+  </form>
+  <div id="list" class="list"><div class="empty">Projekty sa načítavajú. Ak tu zostane prázdno, pridajte prvé video tlačidlom Pridať video.</div></div>
+</main>
+
+<section id="view-detail" class="block" hidden></section>
+
+<section id="view-prehlad" class="block" hidden>
+  <div class="filters">
+    <div class="field"><label for="f-group">Typ videa podľa</label>
+      <select id="f-group">
+        <option value="D">Naratívny formát (D)</option>
+        <option value="F">Produkčná technika (F)</option>
+        <option value="A">Účel (A)</option>
+        <option value="C">Cieľ (C)</option>
+        <option value="G">Zvuk a reč (G)</option>
+        <option value="dlzka">Dĺžka videa</option>
+      </select></div>
+    <div class="field"><label for="f-stav">Projekty</label>
+      <select id="f-stav"><option value="vsetky">Všetky</option><option value="hotove">Len hotové</option></select></div>
+  </div>
+  <h2>Koľko trvajú typy videí</h2>
+  <p class="muted">Priemer hodín na video po fázach. Počítajú sa len vyplnené hodnoty, v zátvorke je počet videí s údajom.</p>
+  <div class="tbl" id="t-hodiny"></div>
+  <h2>Ktoré kroky sú nutné</h2>
+  <p class="muted">Súčet označení zo všetkých videí. Nutný pri dvoch tretinách a viac = jadro procesu. Častá výnimka alebo zbytočný = kandidát na úpravu postupu.</p>
+  <div class="legend"><span class="a">nutný</span><span class="b">výnimka</span><span class="c">zbytočný</span></div>
+  <div class="tbl" id="t-kroky"></div>
+  <h2>Poznámky a chýbajúce kroky</h2>
+  <div id="t-pozn" class="block"></div>
+</section>
+
+<footer>Interná stránka tímu MNK. Dáta sú spoločné pre celý tím, stránka je chránená heslom a vyhľadávače ju neindexujú. <button class="btn-line" type="button" id="odhlasit">Odhlásiť</button> · <a href="/interne/">Interné nástroje</a></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const AXES={
+  A:{n:"Účel",o:["platená reklama","organický obsah","web / landing page","interná / prezentačná"]},
+  B:{n:"Kanál a formát",o:["Meta Reels/Stories 9:16","Meta feed 4:5","TikTok","YT Shorts","YT pre-roll 16:9","web"],multi:true},
+  C:{n:"Cieľ",o:["povedomie / virálne","zvažovanie / edukácia","konverzia / hardsell","retencia / komunita"]},
+  D:{n:"Naratívny formát",o:["storytelling s personou","UGC / testimonial","expert / talking head","produkt / demo","pred a po","trend / meme","mood / brand film"]},
+  E:{n:"Tón",o:["emocionálny","vecný","humorný","prémiový / pokojný","naliehavý"]},
+  F:{n:"Produkčná technika",o:["plne AI","hybrid (reálne + AI)","nakrútené + AI strih","motion / statika"]},
+  G:{n:"Zvuk a reč",o:["bez reči, titulky + hudba","VO (AI / živý hlas)","postavy hovoria (lip-sync)"]}
+};
+const PHASES=[
+  {id:"f1",n:"Typológia a zadefinovanie s klientom",ai:false,steps:[[1,"Prvý kontakt: berieme to? (dopyt a kvalifikácia)"],[2,"Typológia s klientom"],[3,"Obmedzenia a podklady"],[4,"Nacenenie"],[5,"Klient schváli ponuku a zadanie",1]]},
+  {id:"f2",n:"Brief pre AI",ai:false,steps:[[6,"Brief klienta (brief.md)"],[7,"Štýl (style.md)"],[8,"Realita klienta, referenčné fotky"]]},
+  {id:"f3",n:"Skript s AI",ai:true,steps:[[9,"Skript"],[10,"Storyboard"],[11,"Klient schváli skript",2]]},
+  {id:"f4",n:"Generovanie elementov s AI",ai:true,steps:[[12,"Zoznam elementov"],[13,"Karty postáv"],[14,"Lokácie a predmety"],[15,"Testovací klip 3 s"],[16,"Schválenie vizuálu",3]]},
+  {id:"f5",n:"Generovanie scén s AI",ai:true,steps:[[17,"Štartovacia snímka"],[18,"Pohyb v Seedance"],[19,"Kontrola a výber záberov"]]},
+  {id:"f6",n:"Strih s AI",ai:true,steps:[[20,"Hrubý strih"],[21,"Pripomienky k strihu",4]]},
+  {id:"f7",n:"Postprodukcia",ai:false,steps:[[22,"Texty a titulky"],[23,"Dizajn a packshot"],[24,"Finálne schválenie",5],[25,"Exporty a archív"],[26,"Retro"]]}
+];
+const STEP_STATES=[["nutny","Nutný"],["vynimka","Výnimka"],["zbytocny","Zbytočný"]];
+const $=s=>document.querySelector(s);
+const el=(t,a,...c)=>{const e=document.createElement(t);if(a)for(const k in a){if(k==="class")e.className=a[k];else if(k==="text")e.textContent=a[k];else if(k.startsWith("on"))e.addEventListener(k.slice(2),a[k]);else e.setAttribute(k,a[k]);}c.forEach(x=>x!=null&&e.append(x));return e};
+const num=v=>{if(v===""||v==null)return null;const n=parseFloat(String(v).replace(",","."));return isNaN(n)?null:n};
+const fmt=(n,d=1)=>n==null?"–":(Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toLocaleString("sk-SK");
+
+let db=null,user=null,canWrite=true,projects=[],openId=null,tab="projekty";
+/* ---------- úložisko: Netlify Function /api/dennik (heslo tímu) ---------- */
+const API="/api/dennik";
+function heslo(v){try{if(v===undefined)return sessionStorage.getItem("mnk-tim-heslo")||"";if(v===null)sessionStorage.removeItem("mnk-tim-heslo");else sessionStorage.setItem("mnk-tim-heslo",v)}catch(e){return ""}}
+async function call(method,qs,body){
+  const r=await fetch(API+(qs||""),{method,headers:{"Content-Type":"application/json","x-heslo":heslo()},body:body?JSON.stringify(body):undefined,cache:"no-store"});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){const e=new Error(j.chyba||String(r.status));e.code=r.status===401?"unauthorized":r.status===503?"config":"unavailable";throw e}
+  return j;
+}
+const listeners=[];
+async function refresh(){const j=await call("GET");const docs=(j.projekty||[]).slice().sort((a,b)=>String(b.datum||"").localeCompare(String(a.datum||""))).map(p=>({id:p.id,data:()=>p}));listeners.forEach(f=>f({docs}))}
+const newId=()=>Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
+function makeDb(){return{
+  doc:path=>{const id=path.split("/")[1];return{update:async b=>{await call("PATCH","",{id,patch:b})},delete:async()=>{await call("DELETE","?id="+encodeURIComponent(id));await refresh()}}},
+  collection:()=>({doc:()=>{const id=newId();return{id,set:async d=>{await call("POST","",{id,data:d});await refresh()}}},
+    orderBy:()=>({onSnapshot:(cb,err)=>{listeners.push(cb);refresh().catch(err);setInterval(()=>{if(!document.hidden)refresh().catch(()=>{})},30000)}})})
+}}
+const names={};
+
+function banner(t){const b=$("#banner");b.textContent=t;b.hidden=!t}
+
+/* ---------- zápis: jeden zápis naraz na dokument ---------- */
+const queues={};
+function merge(a,b){for(const k in b){if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])){a[k]=merge(a[k]&&typeof a[k]==="object"?a[k]:{},b[k])}else a[k]=b[k]}return a}
+function save(id,patch){
+  if(!db||!canWrite)return;
+  const q=queues[id]||(queues[id]={pending:null,busy:false,timer:null});
+  q.pending=merge(q.pending||{},patch);
+  clearTimeout(q.timer);q.timer=setTimeout(()=>flush(id),400);
+}
+async function flush(id){
+  const q=queues[id];if(!q||q.busy||!q.pending)return;
+  const body=q.pending;q.pending=null;q.busy=true;
+  body.upravene=new Date().toISOString();
+  try{await db.doc("projekty/"+id).update(body);setStatus("Uložené")}
+  catch(e){
+    if(e&&e.code==="invalid_argument"&&!canWriteKnown){canWrite=false;applyReadOnly();banner("Nemáte právo zapisovať. Údaje vidíte len na čítanie.")}
+    else if(e&&e.code==="unavailable"){q.pending=merge(body,q.pending||{});setTimeout(()=>flush(id),1500)}
+    else banner("Zmenu sa nepodarilo uložiť ("+(e&&e.message||"chyba")+"). Skúste to znova.");
+  }
+  q.busy=false;if(q.pending)flush(id);
+}
+let canWriteKnown=false;
+function setStatus(t){const s=$("#d-status");if(s){s.textContent=t;clearTimeout(setStatus.t);setStatus.t=setTimeout(()=>{s.textContent=""},1800)}}
+function applyReadOnly(){$("#btn-new").hidden=!canWrite;document.querySelectorAll("#view-detail input,#view-detail select,#view-detail textarea,#view-detail .seg button,#view-detail .chipbtn").forEach(x=>x.disabled=!canWrite)}
+function pathSet(path,val){const keys=path.split(".");const o={};let c=o;keys.forEach((k,i)=>{if(i===keys.length-1)c[k]=val;else c=c[k]={}});return o}
+function pathGet(obj,path){return path.split(".").reduce((o,k)=>o&&o[k],obj)}
+
+/* ---------- výpočty ---------- */
+function totals(p){let h=0,hk=0,kr=0,kk=0;PHASES.forEach(f=>{const x=(p.fazy||{})[f.id]||{};if(num(x.h)!=null){h+=num(x.h);hk++}if(num(x.kred)!=null){kr+=num(x.kred);kk++}});return{h:hk?h:null,kr:kk?kr:null}}
+function typLabel(p){const t=p.typ||{};return [t.D,t.F].filter(Boolean).join(" · ")||"typ nevyplnený"}
+
+/* ---------- zoznam ---------- */
+function renderList(){
+  const L=$("#list");L.textContent="";
+  $("#count").textContent=projects.length?projects.length+(projects.length===1?" video":projects.length<5?" videá":" videí"):"Zatiaľ žiadne video";
+  if(!projects.length){L.append(el("div",{class:"empty",text:"Zatiaľ tu nie je žiadne video. Pridajte prvé tlačidlom Pridať video a vyplňte typológiu a hodiny po fázach."}));return}
+  projects.forEach(p=>{
+    const t=totals(p);
+    L.append(el("button",{class:"item",type:"button",onclick:()=>openDetail(p.id)},
+      el("div",null,el("div",{class:"t",text:(p.klient||"Bez klienta")+": "+(p.nazov||"bez názvu")}),el("div",{class:"s",text:[p.datum,p.dlzka?fmt(num(p.dlzka))+" s":"",p.zalozil||names[p.autor]||""].filter(Boolean).join(" · ")})),
+      el("div",{class:"s typ",text:typLabel(p)}),
+      el("span",{class:"pill "+(p.stav==="hotove"?"done":"run"),text:p.stav==="hotove"?"hotové":"rozpracované"}),
+      el("div",{class:"h",title:"hodiny spolu",text:t.h==null?"– h":fmt(t.h)+" h"})
+    ));
+  });
+}
+
+/* ---------- detail ---------- */
+function openDetail(id){openId=id;tab="detail";showView();buildDetail();window.scrollTo(0,0)}
+function closeDetail(){openId=null;tab="projekty";showView()}
+function fieldInput(label,path,type,attrs){
+  const id="d-"+path.replace(/\./g,"-");
+  let inp;
+  if(type==="textarea")inp=el("textarea",Object.assign({id,"data-path":path},attrs||{}));
+  else if(type==="select"){inp=el("select",{id,"data-path":path},el("option",{value:"",text:"– vybrať –"}));(attrs.options||[]).forEach(o=>inp.append(el("option",{value:o,text:o})))}
+  else inp=el("input",Object.assign({id,type,"data-path":path},attrs||{}));
+  inp.addEventListener(type==="select"?"change":"input",()=>{let v=inp.value;if(type==="number")v=num(v);save(openId,pathSet(path,v))});
+  return el("div",{class:"field"},el("label",{for:id,text:label}),inp);
+}
+function buildDetail(){
+  const p=projects.find(x=>x.id===openId);const V=$("#view-detail");V.textContent="";
+  if(!p){V.append(el("p",{class:"empty",text:"Tento projekt už neexistuje."}),el("button",{class:"btn-line",type:"button",text:"Späť na projekty",onclick:closeDetail}));return}
+  V.append(el("div",{class:"dhead"},
+    el("div",{class:"barbox"},el("div",null,el("span",{class:"eyebrow",id:"d-klient-h"}),el("h2",{id:"d-nazov-h"}))),
+    el("div",{style:"display:flex;gap:20px;align-items:center;flex-wrap:wrap"},el("span",{class:"status",id:"d-status","aria-live":"polite"}),el("button",{class:"btn-line",type:"button",text:"Späť na projekty",onclick:closeDetail}))));
+  V.append(el("div",{class:"sum",id:"d-sum"}));
+  // základ
+  const base=el("div",{class:"form-grid"},
+    fieldInput("Klient","klient","text"),fieldInput("Názov videa","nazov","text"),fieldInput("Začiatok","datum","date"),
+    fieldInput("Stav","stav","select",{options:[]}),fieldInput("Dĺžka videa (s)","dlzka","number",{min:0,step:"0.1"}),
+    fieldInput("Založil(a) / zodpovedná osoba","zalozil","text",{placeholder:"meno"}),fieldInput("Počet záberov","zabery","number",{min:0}),fieldInput("Počet variantov / exportov","varianty","number",{min:0}));
+  const st=base.querySelector("[data-path=stav]");st.textContent="";[["rozpracovane","rozpracované"],["hotove","hotové"]].forEach(([v,t])=>st.append(el("option",{value:v,text:t})));
+  V.append(el("div",{class:"block"},el("h3",{text:"Základ"}),base));
+  // typológia
+  const tg=el("div",{class:"form-grid"});
+  Object.keys(AXES).forEach(k=>{const ax=AXES[k];
+    if(ax.multi){const box=el("div",{class:"chips",id:"d-typ-"+k});ax.o.forEach(o=>box.append(el("button",{type:"button",class:"chipbtn","data-val":o,"aria-pressed":"false",text:o,onclick:e=>{const b=e.currentTarget;b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")==="true"?"false":"true");const vals=[...box.querySelectorAll('[aria-pressed="true"]')].map(x=>x.dataset.val);save(openId,{typ:{[k]:vals}})}})));
+      tg.append(el("div",{class:"field",style:"grid-column:1/-1"},el("span",{class:"lbl",text:k+" · "+ax.n}),box))}
+    else tg.append(fieldInput(k+" · "+ax.n,"typ."+k,"select",{options:ax.o}));
+  });
+  V.append(el("div",{class:"block"},el("h3",{text:"Typológia zadania"}),tg));
+  // fázy
+  const fz=el("div",{class:"block"},el("h2",{text:"Fázy a kroky"}),el("p",{class:"muted",text:"Hodiny = práca všetkých ľudí na fáze spolu. Verzie = koľko verzií alebo kôl pripomienok vzniklo (skript, strih…). Pri krokoch označte, ako to bolo pri tomto videu."}));
+  PHASES.forEach((f,i)=>{
+    const ph=el("div",{class:"phase"+(f.ai?" ai":"")},el("h3",null,"Fáza "+(i+1)+" · "+f.n,el("span",{class:"who",text:f.ai?"S AI":"TÍM"})));
+    ph.append(el("div",{class:"nums"},fieldInput("Hodiny","fazy."+f.id+".h","number",{min:0,step:"0.25"}),fieldInput("Kredity","fazy."+f.id+".kred","number",{min:0}),fieldInput("Verzie / kolá","fazy."+f.id+".verzie","number",{min:0}),fieldInput("Kto robil","fazy."+f.id+".kto","text",{placeholder:"mená"})));
+    const sl=el("div",{class:"steps"});
+    f.steps.forEach(([n,name,gate])=>{
+      const seg=el("div",{class:"seg",role:"group","aria-label":"Krok "+n,"data-step":"s"+n});
+      STEP_STATES.forEach(([v,t])=>seg.append(el("button",{type:"button","data-v":v,"aria-pressed":"false",text:t,onclick:()=>{const on=seg.querySelector('[aria-pressed="true"]');const cur=on?on.dataset.v:"";const nv=cur===v?"":v;markSeg(seg,nv);save(openId,{kroky:{["s"+n]:nv}})}})));
+      sl.append(el("div",{class:"step"},el("div",{class:"nm"},gate?el("span",{class:"gate",text:"BRÁNA "+gate}):null,el("b",{text:String(n).padStart(2,"0")+" "}),name),seg));
+    });
+    ph.append(sl,fieldInput("Poznámka, chýbajúci krok, čo by pomohlo","fazy."+f.id+".pozn","textarea"));
+    fz.append(ph);
+  });
+  V.append(fz);
+  V.append(el("div",{class:"block"},el("h3",{text:"Poučenia z tohto videa"}),fieldInput("Čo zapísať do šablóny alebo nacenenia","poucenia","textarea",{rows:4}),
+    el("div",null,el("button",{class:"btn-line danger",type:"button",id:"d-del",text:"Zmazať projekt",onclick:delProject}))));
+  fillDetail(true);applyReadOnly();
+}
+function cur_p(){return projects.find(x=>x.id===openId)||{}}
+function markSeg(seg,v){seg.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v?"true":"false"))}
+function fillDetail(force){
+  const p=cur_p();if(!p.id)return;
+  $("#d-klient-h").textContent=p.klient||"Bez klienta";$("#d-nazov-h").textContent=p.nazov||"Bez názvu";
+  const q=queues[openId];
+  document.querySelectorAll("#view-detail [data-path]").forEach(inp=>{
+    if(!force&&(document.activeElement===inp||(q&&q.pending&&pathGet(q.pending,inp.dataset.path)!==undefined)))return;
+    const v=pathGet(p,inp.dataset.path);inp.value=v==null?"":v;
+  });
+  const chips=$("#d-typ-B");if(chips){const vals=(p.typ&&p.typ.B)||[];chips.querySelectorAll(".chipbtn").forEach(b=>b.setAttribute("aria-pressed",vals.includes(b.dataset.val)?"true":"false"))}
+  document.querySelectorAll("#view-detail .seg").forEach(s=>markSeg(s,(p.kroky||{})[s.dataset.step]||""));
+  const t=totals(p);const marks=Object.values(p.kroky||{}).filter(Boolean);
+  const verz=PHASES.reduce((a,f)=>a+(num(((p.fazy||{})[f.id]||{}).verzie)||0),0);
+  const S=$("#d-sum");S.textContent="";
+  [[t.h==null?"–":fmt(t.h),"hodín spolu"],[t.kr==null?"–":fmt(t.kr,0),"kreditov spolu"],[verz||"–","verzií a kôl"],[marks.length+" / 26","označených krokov"],[(p.zalozil||names[p.autor]||"–"),"založil(a)"]].forEach(([v,l])=>S.append(el("div",null,el("div",{class:"v",text:String(v)}),el("div",{class:"l",text:l}))));
+}
+async function delProject(){
+  const b=$("#d-del");
+  if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Naozaj zmazať? Kliknite znova";setTimeout(()=>{if(b.isConnected){b.dataset.confirm="";b.textContent="Zmazať projekt"}},4000);return}
+  try{await db.doc("projekty/"+openId).delete();closeDetail()}catch(e){banner("Projekt sa nepodarilo zmazať ("+(e.code||"chyba")+").")}
+}
+
+/* ---------- prehľad ---------- */
+function bucketLen(s){const n=num(s);if(n==null)return null;if(n<=15)return"do 15 s";if(n<=30)return"16–30 s";if(n<=60)return"31–60 s";return"nad 60 s"}
+function renderOverview(){
+  const g=$("#f-group").value,only=$("#f-stav").value==="hotove";
+  const ps=projects.filter(p=>!only||p.stav==="hotove");
+  // hodiny
+  const groups={};
+  ps.forEach(p=>{let key=g==="dlzka"?bucketLen(p.dlzka):(p.typ||{})[g];key=key||"nevyplnené";(groups[key]=groups[key]||[]).push(p)});
+  const T=$("#t-hodiny");T.textContent="";
+  if(!ps.length){T.append(el("p",{class:"empty",text:"Zatiaľ nie sú zapísané žiadne videá."}))}
+  else{
+    const tb=el("tbody");const tr=el("tr",null,el("th",{text:"Typ"}),el("th",{class:"n",text:"Videí"}));
+    PHASES.forEach((f,i)=>tr.append(el("th",{class:"n",title:f.n,text:"F"+(i+1)})));tr.append(el("th",{class:"n",text:"Spolu h"}),el("th",{class:"n",text:"Kredity"}));
+    Object.keys(groups).sort().forEach(k=>{
+      const arr=groups[k];const row=el("tr",null,el("td",{text:k}),el("td",{class:"n",text:String(arr.length)}));
+      PHASES.forEach(f=>{const vals=arr.map(p=>num(((p.fazy||{})[f.id]||{}).h)).filter(v=>v!=null);row.append(el("td",{class:"n",text:vals.length?fmt(vals.reduce((a,b)=>a+b,0)/vals.length)+" ("+vals.length+")":"–"}))});
+      const th=arr.map(p=>totals(p).h).filter(v=>v!=null),tk=arr.map(p=>totals(p).kr).filter(v=>v!=null);
+      row.append(el("td",{class:"n"},el("b",{text:th.length?fmt(th.reduce((a,b)=>a+b,0)/th.length):"–"})),el("td",{class:"n",text:tk.length?fmt(tk.reduce((a,b)=>a+b,0)/tk.length,0):"–"}));
+      tb.append(row);
+    });
+    T.append(el("table",null,el("thead",null,tr),tb));
+  }
+  // kroky
+  const K=$("#t-kroky");K.textContent="";
+  const kb=el("tbody");
+  PHASES.forEach((f,i)=>f.steps.forEach(([n,name])=>{
+    const c={nutny:0,vynimka:0,zbytocny:0};ps.forEach(p=>{const v=(p.kroky||{})["s"+n];if(c[v]!=null)c[v]++});
+    const tot=c.nutny+c.vynimka+c.zbytocny;
+    let verdict=el("span",{class:"verdict muted",text:"bez dát"});
+    if(tot){if(c.nutny/tot>=2/3)verdict=el("span",{class:"verdict core",text:"jadro"});else if(c.zbytocny/tot>=1/3)verdict=el("span",{class:"verdict cut",text:"zvážiť vypustenie"});else verdict=el("span",{class:"verdict ex",text:"podľa projektu"})}
+    const bar=el("div",{class:"stack",title:c.nutny+" nutný, "+c.vynimka+" výnimka, "+c.zbytocny+" zbytočný"});
+    if(tot){[["a",c.nutny],["b",c.vynimka],["c",c.zbytocny]].forEach(([cl,v])=>v&&bar.append(el("i",{class:cl,style:"width:"+(v/tot*100)+"%"})))}
+    kb.append(el("tr",null,el("td",{class:"n",text:String(n).padStart(2,"0")}),el("td",{text:name}),el("td",{class:"muted",text:"F"+(i+1)}),el("td",null,bar),el("td",{class:"n",text:c.nutny+" / "+c.vynimka+" / "+c.zbytocny}),el("td",null,verdict)));
+  }));
+  K.append(el("table",null,el("thead",null,el("tr",null,el("th",{class:"n",text:"#"}),el("th",{text:"Krok"}),el("th",{text:"Fáza"}),el("th",{text:"Rozloženie"}),el("th",{class:"n",text:"N / V / Z"}),el("th",{text:"Záver"}))),kb));
+  // poznámky
+  const P=$("#t-pozn");P.textContent="";let any=false;
+  PHASES.forEach((f,i)=>{const notes=ps.map(p=>({p,t:(((p.fazy||{})[f.id]||{}).pozn||"").trim()})).filter(x=>x.t);if(!notes.length)return;any=true;
+    const ul=el("ul",{style:"margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px"});notes.forEach(x=>ul.append(el("li",null,el("b",{text:(x.p.klient||"?")+": "}),x.t)));
+    P.append(el("div",{class:"block",style:"gap:6px"},el("h3",{text:"Fáza "+(i+1)+" · "+f.n}),ul))});
+  const pou=ps.filter(p=>(p.poucenia||"").trim());
+  if(pou.length){any=true;const ul=el("ul",{style:"margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px"});pou.forEach(p=>ul.append(el("li",null,el("b",{text:(p.klient||"?")+", "+(p.nazov||"")+": "}),p.poucenia)));P.append(el("div",{class:"block",style:"gap:6px"},el("h3",{text:"Poučenia"}),ul))}
+  if(!any)P.append(el("p",{class:"empty",text:"Zatiaľ bez poznámok. Píšu sa v detaile videa pri každej fáze."}));
+}
+
+/* ---------- navigácia ---------- */
+function showView(){
+  $("#view-projekty").hidden=tab!=="projekty";$("#view-detail").hidden=tab!=="detail";$("#view-prehlad").hidden=tab!=="prehlad";
+  $("#tab-projekty").setAttribute("aria-selected",tab!=="prehlad"?"true":"false");$("#tab-prehlad").setAttribute("aria-selected",tab==="prehlad"?"true":"false");
+  if(tab==="prehlad")renderOverview();
+}
+$("#tab-projekty").addEventListener("click",()=>{openId=null;tab="projekty";showView()});
+$("#tab-prehlad").addEventListener("click",()=>{tab="prehlad";showView()});
+$("#f-group").addEventListener("change",renderOverview);$("#f-stav").addEventListener("change",renderOverview);
+try{const g=localStorage.getItem("dennik-group");if(g)$("#f-group").value=g}catch(e){}
+$("#f-group").addEventListener("change",()=>{try{localStorage.setItem("dennik-group",$("#f-group").value)}catch(e){}});
+
+$("#btn-new").addEventListener("click",()=>{$("#newform").hidden=false;$("#n-datum").value=new Date().toISOString().slice(0,10);$("#n-klient").focus()});
+$("#n-cancel").addEventListener("click",()=>{$("#newform").hidden=true});
+$("#newform").addEventListener("submit",async e=>{
+  e.preventDefault();if(!db){$("#n-msg").textContent="Najprv sa prihláste heslom tímu.";return}
+  const k=$("#n-klient").value.trim(),n=$("#n-nazov").value.trim();if(!k||!n){$("#n-msg").textContent="Vyplňte klienta aj názov.";return}
+  const dt=$("#n-datum").value||"";$("#n-msg").textContent="Ukladám…";
+  try{const uid=null;
+    const ref=db.collection("projekty").doc();
+    await ref.set({klient:k,nazov:n,datum:dt,zalozil:$("#n-zalozil").value.trim(),stav:"rozpracovane",typ:{},fazy:{},kroky:{},autor:uid||"",vytvorene:new Date().toISOString(),upravene:new Date().toISOString()});
+    $("#newform").reset();$("#newform").hidden=true;$("#n-msg").textContent="";
+    if(!projects.find(p=>p.id===ref.id))projects.unshift({id:ref.id,klient:k,nazov:n,datum:dt,stav:"rozpracovane",typ:{},fazy:{},kroky:{}});
+    openDetail(ref.id);
+  }catch(err){$("#n-msg").textContent=err&&err.code==="invalid_argument"?"Nemáte právo pridávať projekty.":err&&err.code==="quota_exceeded"?"Úložisko je plné, zmažte staré projekty.":"Nepodarilo sa uložiť, skúste znova."}
+});
+
+/* ---------- štart ---------- */
+async function resolveNames(){
+  if(!user)return;const ids=[...new Set(projects.map(p=>p.autor).filter(Boolean))].filter(i=>!(i in names));if(!ids.length)return;
+  try{const ps=await user.profiles(ids);ids.forEach(i=>{names[i]=(ps[i]&&ps[i].name)||"kolega"});if(openId)fillDetail(false)}catch(e){}
+}
+let started=false;
+function lock(msg){heslo(null);document.body.classList.add("locked");$("#login-msg").textContent=msg||"";if(started)location.reload()}
+async function start(){
+  if(!heslo()){document.body.classList.add("locked");return}
+  try{await call("GET")}catch(e){lock(e.code==="unauthorized"?"Nesprávne heslo.":e.message);return}
+  document.body.classList.remove("locked");started=true;
+  db=makeDb();canWrite=true;canWriteKnown=true;applyReadOnly();
+  db.collection("projekty").orderBy("datum","desc").onSnapshot(snap=>{
+    projects=snap.docs.map(d=>Object.assign({id:d.id},d.data()));
+    renderList();
+    if(tab==="detail"){if(projects.find(p=>p.id===openId))fillDetail(false);else buildDetail()}
+    if(tab==="prehlad")renderOverview();
+  },err=>{if(err.code==="unauthorized")lock("Heslo sa zmenilo, prihláste sa znova.");else banner("Spojenie so serverom sa prerušilo. Obnovte stránku.")});
+}
+$("#login").addEventListener("submit",e=>{e.preventDefault();heslo($("#heslo").value);$("#login-msg").textContent="Overujem…";start()});
+$("#odhlasit").addEventListener("click",()=>lock(""));
+showView();start();
+})();
+</script>
+
+</body></html>

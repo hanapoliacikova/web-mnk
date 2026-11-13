@@ -1,6 +1,9 @@
 [build]
   publish = "."
 
+[functions]
+  node_bundler = "esbuild"
+
 [[headers]]
   for = "/assets/css/*"
   [headers.values]
@@ -41,4 +44,46 @@
   from = "https://marketingnaklic.cz/*"
   to = "/cz/:splat"
   status = 200
+  force = true
+
+
+# Schvaľovanie kreatív: každá adresa /schvalovanie/<klient>/ ukáže spoločnú stránku,
+# ktorá si načíta /schvalovanie/<klient>/kampan.json. Existujúce súbory (prehlad, obrázky) majú prednosť.
+[[headers]]
+  for = "/schvalovanie/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Netlify porovnáva adresy s lomkou aj bez nej rovnako, preto stačí jedno pravidlo
+# (samostatné presmerovanie na adresu s lomkou by sa zacyklilo).
+[[redirects]]
+  from = "/schvalovanie/:klient/"
+  to = "/schvalovanie/_stranka.html"
+  status = 200
+
+# Interné stránky tímu: nikdy do vyhľadávačov
+[[headers]]
+  for = "/interne/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Súbory projektu, ktoré nemajú byť verejné
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404.html"
+  status = 404
   force = true

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Schvaľovanie kreatív | Marketing na kľúč</title>
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/schvalovanie/app.css?v=1">
+  <script src="/schvalovanie/app.js?v=1" defer></script>
+</head>
+<body>
+<header class="wrap s-head">
+  <div>
+    <a class="s-logo" href="/" aria-label="Marketing na kľúč"><img src="/assets/img/logo.png" alt="Marketing na kľúč" width="100" height="40"></a>
+    <h1 class="bb s-title" id="titul">Schvaľovanie kreatív</h1>
+    <div class="s-meta" id="meta"></div>
+    <p class="s-intro" id="uvod">Pri každom variante kliknite na Schváliť, alebo na Upraviť a napíšte, čo zmeniť. Vaše rozhodnutia uvidíme hneď.</p>
+  </div>
+  <div class="s-who">
+    <label for="meno">Kto schvaľuje</label>
+    <input id="meno" type="text" maxlength="80" autocomplete="name" placeholder="Vaše meno">
+  </div>
+</header>
+
+<div class="s-band">
+  <div class="wrap">
+    <div class="s-stats" role="group" aria-label="Zobraziť podľa stavu">
+      <button class="s-stat ok" type="button" data-filter="schvalene" aria-pressed="false"><span class="n" id="nOk">0</span><span class="l">schválené</span></button>
+      <button class="s-stat uprava" type="button" data-filter="uprava" aria-pressed="false"><span class="n" id="nUprava">0</span><span class="l">na úpravu</span></button>
+      <button class="s-stat caka" type="button" data-filter="caka" aria-pressed="false"><span class="n" id="nCaka">0</span><span class="l">čaká</span></button>
+    </div>
+    <div class="s-progress">
+      <div class="s-bar" aria-hidden="true"><span class="b-ok" id="barOk" style="width:0"></span><span class="b-uprava" id="barUprava" style="width:0"></span></div>
+      <small id="postup">Načítavam návrhy…</small>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="s-msg" id="sprava" role="status"></div>
+  <section class="s-grid" id="grid" aria-live="polite"></section>
+</main>
+
+<footer class="wrap s-foot">
+  Otázky ku kreatívam? Napíšte nám na chcem@marketingnakluc.sk. <span id="aktualizovane"></span>
+</footer>
+<div class="toast" id="toast" hidden></div>
+</body>
+</html>
