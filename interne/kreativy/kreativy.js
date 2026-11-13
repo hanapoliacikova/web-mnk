@@ -71,16 +71,23 @@
   // ---------- editor ----------
   function otvor(slug) {
     sprava('Načítavam…');
-    Promise.all([
-      fetch('/api/kreativy/kampan?klient=' + encodeURIComponent(slug), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('Kampaň sa nenašla.'); return r.json(); }),
-      fetch('/api/schvalovanie?klient=' + encodeURIComponent(slug), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : { stav: {} }; }),
-    ]).then(function (r) {
+    api('GET', '/api/kreativy?klient=' + encodeURIComponent(slug)).then(function (r) {
       sprava('');
-      s.kampan = r[0]; s.stav = r[1].stav || {}; nastavDirty(false);
+      s.kampan = r.kampan; s.stav = r.stav || {}; driveStav(r.drive); nastavDirty(false);
       $('zoznam').hidden = true; $('editor').hidden = false; $('bar').hidden = false;
       document.querySelectorAll('[data-k]').forEach(function (el) { el.value = s.kampan[el.dataset.k] || ''; });
       hlavicka(); kresli(); window.scrollTo(0, 0);
     }).catch(function (e) { sprava(e.message, true); zoznam(); });
+  }
+  function driveStav(d) {
+    var el = $('drive-stav');
+    if (!s.kampan || !s.kampan.drive) { el.innerHTML = ''; return; }
+    if (!d) { el.innerHTML = '<span>Na Drive sa skopíruje do 5 minút po uložení.</span>'; return; }
+    var odkazy = (d.odkazy && d.odkazy.grafika ? '<a href="' + esc(d.odkazy.grafika) + '" target="_blank" rel="noopener">Otvoriť GRAFIKA na Drive</a>' : '') +
+      (d.odkazy && d.odkazy.tabulka ? '<a href="' + esc(d.odkazy.tabulka) + '" target="_blank" rel="noopener">Tabuľka Stav kreatív</a>' : '');
+    if (!d.ok) { el.innerHTML = '<span class="chyba">Drive: ' + esc(d.chyba || 'synchronizácia zlyhala') + ' (skúsi sa znova o 15 minút)</span>' + odkazy; return; }
+    el.innerHTML = '<span>Drive: ' + (d.aktualne ? 'aktuálne, ' : 'čaká na ďalšiu synchronizáciu, ') + 'naposledy ' + esc(datum(d.cas)) + '</span>' + odkazy +
+      ((d.chyby || []).length ? '<span class="chyba">' + d.chyby.map(esc).join('; ') + '</span>' : '');
   }
   function hlavicka() {
     var k = s.kampan;
@@ -208,8 +215,8 @@
       var nahr = {}; s.kampan.varianty.forEach(function (v) { if (v._nahrava) nahr[v.id] = v; });
       s.kampan = j.kampan; s.kampan.varianty.forEach(function (v) { if (nahr[v.id]) { v._nahrava = nahr[v.id]._nahrava; v._percent = nahr[v.id]._percent; } });
       nastavDirty(false); hlavicka();
-      return fetch('/api/schvalovanie?klient=' + encodeURIComponent(s.kampan.slug), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (st) {
-        if (st) s.stav = st.stav || {};
+      return api('GET', '/api/kreativy?klient=' + encodeURIComponent(s.kampan.slug)).catch(function () { return null; }).then(function (st) {
+        if (st) { s.stav = st.stav || {}; driveStav(st.drive); }
         kresli();
         toast(j.zmenene && j.zmenene.length ? 'Uložené. Zmenené varianty čakajú na nové schválenie klienta.' : 'Uložené.');
       });
