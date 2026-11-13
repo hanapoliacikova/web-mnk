@@ -51,6 +51,12 @@ Každý klient má vlastnú tajnú adresu, napríklad `/schvalovanie/ukazka-7f3k
 
 Na `/interne/kreativy/` (heslo tímu): Nová kampaň, pridať varianty, nahrať obrázky alebo videá (viac súborov = karusel), dopísať texty a Uložiť. Hore je odkaz pre klienta na skopírovanie. Veľké fotky sa pri nahrávaní zmenšia na 2400 px, videá do 200 MB sa nahrávajú po kúskoch. Keď sa variant po uložení zmení, dostane novú verziu a vráti sa klientovi na schválenie. Kampane a súbory ukladá `netlify/functions/kreativy.mjs` do Netlify Blobs (store `kreativy`).
 
+**Kópia na Google Drive klienta**
+
+Keď pri kampani vyplníte odkaz na priečinok klienta na Drive, Google skript `tools/google-drive/Kod.gs` (beží pod účtom marketingnakluc@gmail.com každých 5 minút) udržiava v jeho zložke GRAFIKA: `1 ROZPRACOVANÉ` (pre grafičku), `2 NA SCHVÁLENÍ`, `3 NA ÚPRAVU` (poznámka klienta v popise súboru), `4 SCHVÁLENÉ`, `5 ARCHÍV` (staré verzie), v každej podzložku kampane, a tabuľku `Stav kreatív`. Súbory nad 45 MB sa na Drive nekopírujú (obmedzenie Google skriptov), v tabuľke je pri nich odkaz na web.
+
+Nastavenie skriptu (raz): script.google.com pod marketingnakluc@gmail.com, Nový projekt, vložiť obsah `Kod.gs`, do `HESLO` dať heslo tímu (TIM_HESLO), uložiť, spustiť funkciu `nastav` a povoliť prístup.
+
 **Starší spôsob cez repo** (napr. ukážka)
 
 1. Vytvoriť priečinok `schvalovanie/<klient>-<náhodný kód>/` (napr. `bartos-k7q2`, len malé písmená, čísla a pomlčky).

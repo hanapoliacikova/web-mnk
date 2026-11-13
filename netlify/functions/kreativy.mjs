@@ -13,13 +13,17 @@
 //   PUT    /api/kreativy?klient=<slug>               uloží celú kampaň
 //   DELETE /api/kreativy?klient=<slug>               zmaže kampaň aj súbory
 //   PUT    /api/kreativy/subor?klient=&nazov=&cast=&spolu=&typ=&velkost=   nahrá kúsok súboru
+//   GET    /api/kreativy?klient=<slug>               kampaň aj s odkazom na Drive a stavom synchronizácie
+// Pre Google skript, ktorý kopíruje kreatívy na Drive (tools/google-drive/Kod.gs), tiež s x-heslo:
+//   GET    /api/kreativy/drive                       kampane s odkazom na Drive, ktoré sa zmenili od poslednej synchronizácie
+//   POST   /api/kreativy/drive                       {slug, zmena, ok, chyba, chyby, odkazy} výsledok synchronizácie
 import { getStore } from '@netlify/blobs';
 import { randomBytes } from 'node:crypto';
 import { hesloOk, hesloNastavene } from '../tim-heslo.mjs';
 import klientiZRepa from '../schvalovanie-klienti.mjs';
 
 export const config = {
-  path: ['/api/kreativy', '/api/kreativy/kampan', '/api/kreativy/subor', '/api/kreativy/subor/:slug/:nazov'],
+  path: ['/api/kreativy', '/api/kreativy/kampan', '/api/kreativy/drive', '/api/kreativy/subor', '/api/kreativy/subor/:slug/:nazov'],
 };
 
 const SLUG = /^[a-z0-9-]{3,60}$/;
@@ -41,6 +45,22 @@ const json = (data, status = 200) =>
   });
 
 const txt = (v, max) => String(v == null ? '' : v).trim().slice(0, max);
+const DRIVE = /^https:\/\/drive\.google\.com\/[^\s"'<>]+$|^[A-Za-z0-9_-]{20,80}$/;
+const OPAKOVAT_PO_CHYBE = 15 * 60 * 1000;
+
+async function stavKampane(stavStore, slug) {
+  const stav = {};
+  if (!stavStore) return stav;
+  const { blobs } = await stavStore.list({ prefix: slug + '/' });
+  await Promise.all(blobs.map(async ({ key }) => {
+    const z = await stavStore.get(key, { type: 'json' });
+    if (z) stav[key.slice(slug.length + 1)] = { status: z.status, poznamka: z.poznamka, meno: z.meno, cas: z.cas, info: z.info, predtym: z.predtym };
+  }));
+  return stav;
+}
+const poslednaZmena = (kampan, stav) =>
+  [kampan.upravene, ...Object.values(stav).map((z) => z.cas)].filter(Boolean).sort().pop() || '';
+const verejna = (k) => { const { drive, ...zvysok } = k; return zvysok; };
 
 export function slugZ(meno) {
   const zaklad = String(meno || '')
@@ -86,6 +106,7 @@ function vycisti(slug, b, predtym) {
       kanal: txt(b.kanal, 120),
       termin,
       uvod: txt(b.uvod, 1000),
+      drive: DRIVE.test(txt(b.drive, 300)) ? txt(b.drive, 300) : '',
       varianty,
       vytvorene: (predtym && predtym.vytvorene) || new Date().toISOString(),
       upravene: new Date().toISOString(),
@@ -175,7 +196,7 @@ export async function handle(req, store, stavStore, ctx = {}) {
     const slug = q('klient');
     if (req.method !== 'GET' || !SLUG.test(slug || '')) return json({ chyba: 'Neznámy klient.' }, 404);
     const k = await store.get(`kampane/${slug}`, { type: 'json' });
-    return k ? json(k) : json({ chyba: 'Neznámy klient.' }, 404);
+    return k ? json(verejna(k)) : json({ chyba: 'Neznámy klient.' }, 404);
   }
 
   // tím
@@ -204,7 +225,45 @@ export async function handle(req, store, stavStore, ctx = {}) {
     return json({ ok: true, hotovo: meta.hotovo, cesta: `/api/kreativy/subor/${slug}/${nazov}` });
   }
 
+  if (p === '/api/kreativy/drive') {
+    if (req.method === 'GET') {
+      const { blobs } = await store.list({ prefix: 'kampane/' });
+      const kampane = [];
+      for (const { key } of blobs) {
+        const k = await store.get(key, { type: 'json' });
+        if (!k || !k.drive) continue;
+        const stav = await stavKampane(stavStore, k.slug);
+        const zmena = poslednaZmena(k, stav);
+        const info = await store.get(`drive/${k.slug}`, { type: 'json' });
+        const hotovo = info && info.zmena === zmena && (info.ok || Date.now() - Date.parse(info.cas) < OPAKOVAT_PO_CHYBE);
+        if (!hotovo) kampane.push({ kampan: k, stav, zmena });
+      }
+      return json({ kampane, web: url.origin });
+    }
+    if (req.method === 'POST') {
+      let b; try { b = await req.json(); } catch { return json({ chyba: 'Neplatné dáta.' }, 400); }
+      if (!SLUG.test((b && b.slug) || '') || !(await store.get(`kampane/${b.slug}`, { type: 'json' }))) return json({ chyba: 'Neznámy klient.' }, 404);
+      const odkazy = {};
+      ['grafika', 'tabulka', 'kampan'].forEach((x) => { if (/^https:\/\/(drive|docs)\.google\.com\//.test((b.odkazy || {})[x] || '')) odkazy[x] = b.odkazy[x]; });
+      await store.setJSON(`drive/${b.slug}`, {
+        zmena: txt(b.zmena, 40), ok: Boolean(b.ok), chyba: txt(b.chyba, 500),
+        chyby: (Array.isArray(b.chyby) ? b.chyby : []).slice(0, 20).map((x) => txt(x, 300)),
+        odkazy, cas: new Date().toISOString(),
+      });
+      return json({ ok: true });
+    }
+    return json({ chyba: 'Nepodporovaná metóda.' }, 405);
+  }
+
   if (p === '/api/kreativy') {
+    if (req.method === 'GET' && q('klient')) {
+      const slug = q('klient');
+      const k = SLUG.test(slug) && (await store.get(`kampane/${slug}`, { type: 'json' }));
+      if (!k) return json({ chyba: 'Kampaň neexistuje.' }, 404);
+      const stav = await stavKampane(stavStore, slug);
+      const info = await store.get(`drive/${slug}`, { type: 'json' });
+      return json({ kampan: k, stav, drive: info ? { ...info, aktualne: info.ok && info.zmena === poslednaZmena(k, stav) } : null });
+    }
     if (req.method === 'GET') {
       const { blobs } = await store.list({ prefix: 'kampane/' });
       const kampane = (await Promise.all(blobs.map(({ key }) => store.get(key, { type: 'json' })))).filter(Boolean);
@@ -242,6 +301,7 @@ export async function handle(req, store, stavStore, ctx = {}) {
       const { blobs } = await store.list({ prefix: `subory/${slug}/` });
       await Promise.all(blobs.map(({ key }) => store.delete(key)));
       await store.delete(`kampane/${slug}`);
+      await store.delete(`drive/${slug}`);
       if (stavStore) {
         const s = await stavStore.list({ prefix: slug + '/' });
         await Promise.all(s.blobs.map(({ key }) => stavStore.delete(key)));

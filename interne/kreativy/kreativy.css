@@ -59,3 +59,9 @@
   .e-two { grid-template-columns: 1fr; }
   .e-danger { padding-bottom: 140px; }
 }
+.e-f .e-hint { margin: 2px 0 0; }
+.e-drive { font-size: 14px; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.e-drive:empty { display: none; }
+.e-drive a { color: var(--petrol); font-weight: 600; }
+.e-drive .chyba { color: var(--uprava); }
+html { scroll-padding-bottom: 96px; }
