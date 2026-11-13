@@ -18,7 +18,8 @@
     var odkaz = location.origin + '/schvalovanie/' + k.slug + '/';
     return '<article class="p-client"><div class="p-top"><div><h2 class="bb">' + esc(k.klient) + '</h2>' +
       '<div class="s-meta">' + esc((kampan && kampan.kampan) || '') + '</div></div>' +
-      '<a href="' + esc(odkaz) + '" target="_blank" rel="noopener">' + esc(odkaz) + '</a></div>' +
+      '<div class="p-links"><a href="' + esc(odkaz) + '" target="_blank" rel="noopener">' + esc(odkaz) + '</a>' +
+      (k.kampanData ? '<a href="/interne/kreativy/#' + esc(k.slug) + '">Upraviť kreatívy</a>' : '') + '</div></div>' +
       '<div class="s-stats"><span class="s-stat ok"><span class="n">' + ok + '</span><span class="l">schválené</span></span>' +
       '<span class="s-stat uprava"><span class="n">' + up + '</span><span class="l">na úpravu</span></span>' +
       '<span class="s-stat caka"><span class="n">' + (varianty.length - ok - up) + '</span><span class="l">čaká</span></span></div>' +
@@ -32,6 +33,7 @@
       .then(function (j) {
         ss('mnk-tim-heslo', heslo);
         return Promise.all(j.klienti.map(function (k) {
+          if (k.kampanData) return k.kampanData;
           return fetch('/schvalovanie/' + k.slug + '/kampan.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
         })).then(function (kampane) {
           $('login').hidden = true; $('odhlasit').hidden = false; $('zoznam').hidden = false;

@@ -1,5 +1,5 @@
 /* Schvaľovanie kreatív: klientska stránka.
-   Obsah kampane: /schvalovanie/<klient>/kampan.json
+   Obsah kampane: z /interne/kreativy/ (API /api/kreativy/kampan), inak /schvalovanie/<klient>/kampan.json
    Stav (schválené, na úpravu): Netlify Function /api/schvalovanie */
 (function () {
   'use strict';
@@ -42,6 +42,8 @@
     var st = d.status || 'caka';
     var fb = '';
     if (st === 'uprava') fb = '<div class="fb"><div class="lbl">Čo upraviť</div>' + esc(d.poznamka) + '<small>' + esc(d.meno || 'Klient') + ', ' + esc(cas(d.cas)) + '</small></div>';
+    if (st === 'caka' && d.info && d.predtym && d.predtym.status === 'uprava') fb = '<div class="fb nova"><div class="lbl">' + esc(d.info) + '</div>Upravené podľa poznámky: ' + esc(d.predtym.poznamka) + '</div>';
+    else if (st === 'caka' && d.info) fb = '<div class="fb nova"><div class="lbl">' + esc(d.info) + '</div>Prosíme o nové posúdenie.</div>';
     if (st === 'schvalene') fb = '<div class="fb ok">Schválené' + (d.poznamka ? ': ' + esc(d.poznamka) : '') + '<small>' + esc(d.meno || 'Klient') + ', ' + esc(cas(d.cas)) + '</small></div>';
     var akcie;
     if (s.otvorene === v.id) {
@@ -54,7 +56,7 @@
         (st !== 'caka' ? '<button class="btn link" type="button" data-a="vratit" data-id="' + esc(v.id) + '">Vrátiť do stavu čaká</button>' : '');
     }
     return '<article class="k" data-stav="' + st + '">' + media(v) + '<div class="k-body">' +
-      '<div class="k-row"><span class="k-name">' + esc(v.nazov) + '</span><span class="pill ' + st + '">' + NAZVY[st] + '</span></div>' +
+      '<div class="k-row"><span class="k-name">' + esc(v.nazov) + (v.verzia > 1 ? ' <span class="k-ver">verzia ' + v.verzia + '</span>' : '') + '</span><span class="pill ' + st + '">' + NAZVY[st] + '</span></div>' +
       (v.nadpis ? '<div><div class="lbl">Nadpis</div><div class="k-head">' + esc(v.nadpis) + '</div></div>' : '') +
       (v.text ? '<div><div class="lbl">Text</div><div class="k-text">' + esc(v.text) + '</div></div>' : '') +
       (v.cta ? '<div><div class="lbl">Výzva k akcii</div><span class="k-cta">' + esc(v.cta) + '</span></div>' : '') +
@@ -136,14 +138,22 @@
   });
 
   if (!slug) { $('grid').innerHTML = '<div class="s-empty"><h2 class="bb">Stránka sa nenašla</h2>Skontrolujte odkaz, ktorý ste od nás dostali.</div>'; return; }
-  fetch('/schvalovanie/' + slug + '/kampan.json', { cache: 'no-store' })
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+  function nacitajKampan() {
+    var staticka = function () { return fetch('/schvalovanie/' + slug + '/kampan.json', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
+    return fetch('/api/kreativy/kampan?klient=' + encodeURIComponent(slug), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : staticka(); }, staticka);
+  }
+  nacitajKampan()
     .then(function (k) { s.kampan = k; s.nacitane = true; hlavicka(k); render(); return nacitajStav(); })
     .catch(function () {
       s.nacitane = true; render();
       $('grid').innerHTML = '<div class="s-empty"><h2 class="bb">Stránka sa nenašla</h2>Skontrolujte odkaz, ktorý ste od nás dostali, alebo nám napíšte.</div>';
     });
   // obnova stavu, aby klient aj agentúra videli zmeny druhej strany
-  setInterval(function () { if (s.kampan && !document.hidden && !s.otvorene) nacitajStav(); }, 30000);
-  document.addEventListener('visibilitychange', function () { if (!document.hidden && s.kampan && !s.otvorene) nacitajStav(); });
+  function obnov() {
+    if (!s.kampan || document.hidden || s.otvorene) return;
+    nacitajKampan().then(function (k) { if (JSON.stringify(k.varianty) !== JSON.stringify(s.kampan.varianty)) { s.kampan = k; hlavicka(k); } }, function () {}).then(nacitajStav);
+  }
+  setInterval(obnov, 30000);
+  document.addEventListener('visibilitychange', obnov);
 })();
