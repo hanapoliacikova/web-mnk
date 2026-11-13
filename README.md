@@ -56,4 +56,10 @@ Každý klient má vlastnú tajnú adresu, napríklad `/schvalovanie/ukazka-7f3k
 
 Nové kolo: pridať varianty s novým `id` (napr. `a2`), staré rozhodnutia ostanú uložené.
 
-**Technika:** spoločná stránka `schvalovanie/_stranka.html` + `app.js` + `app.css` (presmerovanie v `netlify.toml`). Stav sa ukladá cez Netlify Function `netlify/functions/schvalovanie.mjs` do Netlify Blobs (store `schvalovanie`). Heslo prehľadu je premenná prostredia `SCHVALOVANIE_HESLO` v Netlify (Site configuration, Environment variables). Stránky majú noindex a sú vylúčené v `robots.txt`.
+**Technika:** spoločná stránka `schvalovanie/_stranka.html` + `app.js` + `app.css` (presmerovanie v `netlify.toml`). Stav sa ukladá cez Netlify Function `netlify/functions/schvalovanie.mjs` do Netlify Blobs (store `schvalovanie`). Heslo prehľadu je premenná prostredia `TIM_HESLO` v Netlify (spoločná pre všetky interné stránky) (Site configuration, Environment variables). Stránky majú noindex a sú vylúčené v `robots.txt`.
+
+## Interné nástroje tímu (marketingnakluc.sk/interne/)
+
+Rozcestník `/interne/` vedie na Prehľad schvaľovania a na **Denník AI videí** (`/interne/dennik-ai-videi/`). Denník je prenesený z artefaktu v Claude: projekty, hodiny, kredity a kroky po fázach sa ukladajú cez `netlify/functions/dennik.mjs` do Netlify Blobs (store `dennik`). Projekty z pôvodného artefaktu sa zapíšu pri prvom otvorení (`netlify/dennik-seed.mjs`).
+
+Všetky interné stránky chráni jedno heslo tímu, premenná `TIM_HESLO` v Netlify. Majú noindex a sú vylúčené v `robots.txt`; nikam z verejného webu na ne nevedie odkaz.

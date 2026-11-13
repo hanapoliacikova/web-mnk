@@ -1,9 +1,9 @@
 // Ukladanie schvaľovania kreatív do Netlify Blobs.
 //   GET  /api/schvalovanie?klient=<slug>       stav jedného klienta (verejné, slug je tajný odkaz)
 //   POST /api/schvalovanie                     {klient, variant, status, poznamka, meno}
-//   GET  /api/schvalovanie/prehlad             všetci klienti, hlavička x-heslo = SCHVALOVANIE_HESLO
+//   GET  /api/schvalovanie/prehlad             všetci klienti, hlavička x-heslo = TIM_HESLO
 import { getStore } from '@netlify/blobs';
-import { createHash, timingSafeEqual } from 'node:crypto';
+import { hesloOk, hesloNastavene } from '../tim-heslo.mjs';
 import klienti from '../schvalovanie-klienti.mjs';
 
 const STATUSY = ['schvalene', 'uprava', 'caka'];
@@ -29,20 +29,12 @@ async function stavKlienta(store, slug) {
   return stav;
 }
 
-function hesloOk(zadane) {
-  const spravne = process.env.SCHVALOVANIE_HESLO || '';
-  if (!spravne || !zadane) return false;
-  const a = createHash('sha256').update(String(zadane)).digest();
-  const b = createHash('sha256').update(spravne).digest();
-  return timingSafeEqual(a, b);
-}
-
 export async function handle(req, store) {
   const url = new URL(req.url);
 
   if (url.pathname.endsWith('/prehlad')) {
     if (req.method !== 'GET') return json({ chyba: 'Nepodporovaná metóda.' }, 405);
-    if (!process.env.SCHVALOVANIE_HESLO) return json({ chyba: 'Heslo pre prehľad nie je nastavené v Netlify (premenná SCHVALOVANIE_HESLO).' }, 503);
+    if (!hesloNastavene()) return json({ chyba: 'Heslo tímu nie je nastavené v Netlify (premenná TIM_HESLO).' }, 503);
     if (!hesloOk(req.headers.get('x-heslo'))) return json({ chyba: 'Nesprávne heslo.' }, 401);
     const zoznam = await Promise.all(klienti.map(async (k) => ({ ...k, stav: await stavKlienta(store, k.slug) })));
     return json({ klienti: zoznam });

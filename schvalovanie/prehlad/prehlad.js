@@ -1,4 +1,4 @@
-/* Prehľad schvaľovania pre tím MNK. Heslo = premenná SCHVALOVANIE_HESLO v Netlify. */
+/* Prehľad schvaľovania pre tím MNK. Heslo = premenná TIM_HESLO v Netlify. */
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
@@ -30,7 +30,7 @@
     fetch('/api/schvalovanie/prehlad', { headers: { 'x-heslo': heslo }, cache: 'no-store' })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.chyba || 'Chyba'); return j; }); })
       .then(function (j) {
-        ss('mnk-prehlad', heslo);
+        ss('mnk-tim-heslo', heslo);
         return Promise.all(j.klienti.map(function (k) {
           return fetch('/schvalovanie/' + k.slug + '/kampan.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
         })).then(function (kampane) {
@@ -38,10 +38,10 @@
           $('zoznam').innerHTML = j.klienti.length ? j.klienti.map(function (k, i) { return klientHTML(k, kampane[i]); }).join('') : '<div class="s-empty"><h2 class="bb">Zatiaľ žiadni klienti</h2></div>';
         });
       })
-      .catch(function (e) { ss('mnk-prehlad', null); $('login').hidden = false; $('sprava').textContent = e.message; $('sprava').classList.add('chyba'); });
+      .catch(function (e) { ss('mnk-tim-heslo', null); $('login').hidden = false; $('sprava').textContent = e.message; $('sprava').classList.add('chyba'); });
   }
 
   $('login').addEventListener('submit', function (e) { e.preventDefault(); nacitaj($('heslo').value); });
-  $('odhlasit').addEventListener('click', function () { ss('mnk-prehlad', null); location.reload(); });
-  var ulozene = ss('mnk-prehlad'); if (ulozene) nacitaj(ulozene);
+  $('odhlasit').addEventListener('click', function () { ss('mnk-tim-heslo', null); location.reload(); });
+  var ulozene = ss('mnk-tim-heslo'); if (ulozene) nacitaj(ulozene);
 })();

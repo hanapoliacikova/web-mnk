@@ -3,5 +3,6 @@ Allow: /
 Disallow: /dakujeme/
 Disallow: /cz/
 Disallow: /schvalovanie/
+Disallow: /interne/
 
 Sitemap: https://marketingnakluc.sk/sitemap.xml

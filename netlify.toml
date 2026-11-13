@@ -62,6 +62,13 @@
   to = "/schvalovanie/_stranka.html"
   status = 200
 
+# Interné stránky tímu: nikdy do vyhľadávačov
+[[headers]]
+  for = "/interne/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
 # Súbory projektu, ktoré nemajú byť verejné
 [[redirects]]
   from = "/netlify/*"
