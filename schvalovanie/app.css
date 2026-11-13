@@ -74,6 +74,8 @@ button { cursor: pointer; }
 .k-cta { display: inline-block; padding: 6px 12px; border-radius: 6px; background: var(--mata-2); font-weight: 600; font-size: 14px; }
 .fb { border-radius: 8px; padding: 10px 12px; font-size: 15px; background: var(--uprava-bg); overflow-wrap: anywhere; white-space: pre-line; }
 .fb.ok { background: var(--ok-bg); }
+.fb.nova { background: var(--mata); }
+.k-ver { font-size: 12px; font-weight: 600; color: var(--petrol); white-space: nowrap; }
 .fb small { display: block; color: var(--seda); font-size: 12px; margin-top: 4px; white-space: normal; }
 .k-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
 .btn { border: 1.5px solid var(--linka); background: var(--biela); padding: 9px 16px; border-radius: 8px; font-weight: 600; font-size: 15px; }
@@ -103,6 +105,7 @@ textarea { width: 100%; min-height: 90px; padding: 10px 12px; border: 1px solid 
 .p-client h2 { font-size: 32px; margin: 0; }
 .p-top { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: baseline; }
 .p-top a { color: var(--petrol); font-weight: 600; font-size: 14px; overflow-wrap: anywhere; }
+.p-links { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; text-align: right; min-width: 0; }
 .p-table { overflow-x: auto; }
 .p-table table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .p-table th { text-align: left; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--seda); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--linka); }

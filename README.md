@@ -47,7 +47,11 @@ Preklady sú v `tools/cz/preklad.json`. Po každej zmene slovenského textu dopl
 
 Každý klient má vlastnú tajnú adresu, napríklad `/schvalovanie/ukazka-7f3k/`. Klient pri každom variante klikne Schváliť alebo Upraviť s poznámkou. Tím vidí všetkých klientov na `/schvalovanie/prehlad/` (heslo).
 
-**Nový klient alebo nové kolo kreatív**
+**Nový klient alebo nové kolo kreatív (bežný postup, bez GitHubu)**
+
+Na `/interne/kreativy/` (heslo tímu): Nová kampaň, pridať varianty, nahrať obrázky alebo videá (viac súborov = karusel), dopísať texty a Uložiť. Hore je odkaz pre klienta na skopírovanie. Veľké fotky sa pri nahrávaní zmenšia na 2400 px, videá do 200 MB sa nahrávajú po kúskoch. Keď sa variant po uložení zmení, dostane novú verziu a vráti sa klientovi na schválenie. Kampane a súbory ukladá `netlify/functions/kreativy.mjs` do Netlify Blobs (store `kreativy`).
+
+**Starší spôsob cez repo** (napr. ukážka)
 
 1. Vytvoriť priečinok `schvalovanie/<klient>-<náhodný kód>/` (napr. `bartos-k7q2`, len malé písmená, čísla a pomlčky).
 2. Do neho dať obrázky (JPG, PNG, WEBP, SVG) alebo videá (MP4) a súbor `kampan.json` podľa vzoru v `schvalovanie/ukazka-7f3k/kampan.json`. Karusel = viac súborov v `obrazky`.

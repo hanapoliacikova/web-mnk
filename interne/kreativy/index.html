@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Kreatívy na schválenie | Marketing na kľúč</title>
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/schvalovanie/app.css?v=2">
+  <link rel="stylesheet" href="/interne/kreativy/kreativy.css?v=1">
+  <script src="/interne/kreativy/kreativy.js?v=1" defer></script>
+</head>
+<body>
+<header class="wrap s-head">
+  <div>
+    <a class="s-logo" href="/interne/" aria-label="Interné nástroje"><img src="/assets/img/logo.png" alt="Marketing na kľúč" width="100" height="40"></a>
+    <h1 class="bb s-title" id="titul">Kreatívy na schválenie</h1>
+    <div class="s-meta" id="podtitul">Tu nahráte návrhy pre klienta. Klient ich uvidí na svojom odkaze a schváli alebo napíše, čo upraviť.</div>
+  </div>
+  <div class="e-headbtns">
+    <a class="btn" href="/schvalovanie/prehlad/">Prehľad schvaľovania</a>
+    <button class="btn" type="button" id="odhlasit" hidden>Odhlásiť</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <form class="p-login" id="login" hidden>
+    <label for="heslo"><b>Heslo tímu</b></label>
+    <input id="heslo" type="password" autocomplete="current-password" required>
+    <button class="btn primary" type="submit">Prihlásiť</button>
+    <div class="s-msg" id="login-msg" role="status"></div>
+  </form>
+
+  <!-- zoznam kampaní -->
+  <section id="zoznam" hidden>
+    <form class="e-new" id="nova">
+      <h2 class="bb">Nová kampaň</h2>
+      <div class="e-row">
+        <label class="e-f"><span class="lbl">Klient</span><input name="klient" required maxlength="120" placeholder="Napríklad ArtDentistic"></label>
+        <label class="e-f"><span class="lbl">Kampaň</span><input name="kampan" maxlength="160" placeholder="Napríklad Fazety, november"></label>
+        <button class="btn primary" type="submit">Založiť</button>
+      </div>
+      <p class="e-hint">Klient dostane vlastný odkaz s náhodným kódom, napríklad marketingnakluc.sk/schvalovanie/artdentistic-4f2a/. Pre ďalšiu kampaň toho istého klienta založte novú.</p>
+    </form>
+    <div class="e-list" id="kampane"></div>
+  </section>
+
+  <!-- editor jednej kampane -->
+  <section id="editor" hidden>
+    <a class="e-back" href="#">← Všetky kampane</a>
+    <div class="e-link" id="odkaz"></div>
+    <div class="e-box">
+      <h2 class="bb">Kampaň</h2>
+      <div class="e-grid">
+        <label class="e-f"><span class="lbl">Klient</span><input data-k="klient" maxlength="120"></label>
+        <label class="e-f"><span class="lbl">Kampaň</span><input data-k="kampan" maxlength="160"></label>
+        <label class="e-f"><span class="lbl">Kanál</span><input data-k="kanal" maxlength="120" placeholder="Napríklad Meta (Facebook, Instagram)"></label>
+        <label class="e-f"><span class="lbl">Termín schválenia</span><input data-k="termin" type="date"></label>
+        <label class="e-f e-wide"><span class="lbl">Úvod pre klienta (nepovinné)</span><textarea data-k="uvod" maxlength="1000" placeholder="Ak necháte prázdne, klient uvidí: Pri každom variante kliknite na Schváliť, alebo na Upraviť a napíšte, čo zmeniť."></textarea></label>
+      </div>
+    </div>
+    <div id="varianty"></div>
+    <button class="btn e-add" type="button" id="pridat">+ Pridať variant</button>
+    <div class="e-danger">
+      <button class="btn link" type="button" id="zmazat">Zmazať celú kampaň</button>
+    </div>
+  </section>
+  <div class="s-msg" id="sprava" role="status"></div>
+</main>
+
+<div class="e-bar" id="bar" hidden>
+  <div class="wrap">
+    <span id="bar-stav">Všetko uložené</span>
+    <button class="btn primary" type="button" id="ulozit">Uložiť</button>
+  </div>
+</div>
+
+<datalist id="formaty">
+  <option value="Feed 1:1"><option value="Feed 4:5"><option value="Story 9:16"><option value="Reels 9:16">
+  <option value="Karusel"><option value="Video 16:9"><option value="Banner"><option value="Google Display">
+</datalist>
+<datalist id="cta">
+  <option value="Zistiť viac"><option value="Nakúpiť"><option value="Rezervovať"><option value="Objednať">
+  <option value="Kontaktujte nás"><option value="Prihlásiť sa"><option value="Stiahnuť"><option value="Pozrieť ponuku">
+</datalist>
+<div class="toast" id="toast" hidden></div>
+</body>
+</html>
