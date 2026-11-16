@@ -16,6 +16,9 @@
   --max: 1280px;
   --gutter: clamp(16px, 4vw, 32px);
   --sekcia: clamp(64px, 9vw, 104px);
+  /* Web má len svetlú verziu. Vypína automatické stmavenie v prehliadačoch
+     (Chrome Auto Dark, Samsung Internet), pri ktorom zanikali čierne logá klientov. */
+  color-scheme: only light;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -274,7 +277,9 @@ img.plagat { width: 100%; height: auto; object-fit: contain; display: block; }
 
 /* Stena log klientov (Domov, Referencie) */
 .logo-stena { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0; }
-.logo-klient { outline: 1px solid var(--mata-2); outline-offset: -0.5px; display: flex; align-items: center; justify-content: center; text-align: center; aspect-ratio: 3 / 2; padding: 20px; }
+/* Svetlý podklad je obrázok (SVG), nie farba: prehliadače ho pri vnútenom tmavom režime nestmavia,
+   takže čierne logá ostanú čitateľné aj v Chrome Auto Dark či Samsung Internet. */
+.logo-klient { background: #FFFCF9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23FFFCF9'/%3E%3C/svg%3E") center / cover no-repeat; outline: 1px solid var(--mata-2); outline-offset: -0.5px; display: flex; align-items: center; justify-content: center; text-align: center; aspect-ratio: 3 / 2; padding: 20px; }
 .logo-klient span { font-family: 'Bebas Neue', sans-serif; font-size: 26px; line-height: 1.05; color: #6B6B6B; letter-spacing: .02em; }
 .logo-klient img { width: 100%; max-width: 150px; height: 60px; object-fit: contain; opacity: .85; transition: opacity .2s; }
 .logo-klient:hover img { opacity: 1; }
