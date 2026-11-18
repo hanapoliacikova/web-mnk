@@ -108,6 +108,7 @@ for sk_f, cz_f, sk_url, cz_url in PAGES:
     cz = cz.replace(SK + '/assets/', CZ + '/assets/')
     cz = cz.replace('/assets/img/logo.png', '/assets/img/logo-cz.png').replace('/assets/img/logo-biele.png', '/assets/img/logo-cz-biele.png')
     cz = cz.replace('value="%s/dakujeme/"' % SK, 'value="%s/dekujeme/"' % CZ)
+    cz = cz.replace('href="tel:+421911239151">+421 911 239 151<', 'href="tel:+420605949008">+420 605 949 008<')
     if 'kalkulacka' in sk_f:
         for a, b in KALK:
             cz = cz.replace(a, b)
