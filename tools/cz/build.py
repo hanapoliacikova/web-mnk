@@ -109,6 +109,7 @@ for sk_f, cz_f, sk_url, cz_url in PAGES:
     cz = cz.replace('/assets/img/logo.png', '/assets/img/logo-cz.png').replace('/assets/img/logo-biele.png', '/assets/img/logo-cz-biele.png')
     cz = cz.replace('value="%s/dakujeme/"' % SK, 'value="%s/dekujeme/"' % CZ)
     cz = cz.replace('href="tel:+421911239151">+421 911 239 151<', 'href="tel:+420605949008">+420 605 949 008<')
+    cz = cz.replace('<p>Karpatské námestie 10A, 831 06 Bratislava &nbsp;·&nbsp; IČO 50366335 &nbsp;·&nbsp;', '<p>Poliačiky consulting s.r.o. &nbsp;·&nbsp; Školská 660/3, Nové Město, 110 00 Praha 1 &nbsp;·&nbsp; IČO 225 65 493 &nbsp;·&nbsp;')
     if 'kalkulacka' in sk_f:
         for a, b in KALK:
             cz = cz.replace(a, b)
