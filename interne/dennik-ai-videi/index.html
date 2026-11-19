@@ -129,6 +129,19 @@ td.n b{font-size:15px}
 .verdict.core{color:var(--ok)}.verdict.ex{color:var(--warn)}.verdict.cut{color:var(--bad)}
 .filters{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
 .filters .field{min-width:200px}
+.files{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.files .lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.flist{display:flex;flex-direction:column}
+.file{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.6fr) auto auto;gap:6px 14px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+.file .fn{font:inherit;font-weight:600;color:var(--accent);background:none;border:0;padding:0;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.file a.fn{display:inline}
+.file input{padding:5px 8px;font-size:13px}
+.file .meta{font-size:12px;color:var(--muted);white-space:nowrap}
+@media (max-width:640px){.file{grid-template-columns:minmax(0,1fr) auto auto}.file input{grid-column:1/-1;order:3}}
+.fadd{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.fadd input[type=text]{flex:1 1 220px;width:auto}
+.fadd .status{flex-basis:100%}
+.fadd .status:empty{display:none}
 footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -352,10 +365,11 @@ function buildDetail(){
       STEP_STATES.forEach(([v,t])=>seg.append(el("button",{type:"button","data-v":v,"aria-pressed":"false",text:t,onclick:()=>{const on=seg.querySelector('[aria-pressed="true"]');const cur=on?on.dataset.v:"";const nv=cur===v?"":v;markSeg(seg,nv);save(openId,{kroky:{["s"+n]:nv}})}})));
       sl.append(el("div",{class:"step"},el("div",{class:"nm"},gate?el("span",{class:"gate",text:"BRÁNA "+gate}):null,el("b",{text:String(n).padStart(2,"0")+" "}),name),seg));
     });
-    ph.append(sl,fieldInput("Poznámka, chýbajúci krok, čo by pomohlo","fazy."+f.id+".pozn","textarea"));
+    ph.append(sl,fieldInput("Poznámka, chýbajúci krok, čo by pomohlo","fazy."+f.id+".pozn","textarea"),filesBlock(f.id,"Súbory k fáze"));
     fz.append(ph);
   });
   V.append(fz);
+  V.append(el("div",{class:"block"},el("h3",{text:"Ostatné súbory"}),el("p",{class:"muted",text:"Súbory, ktoré nepatria ku konkrétnej fáze, napríklad finálne exporty alebo zmluva. Pri fázach vyššie sa dajú pridať súbory priamo k nim, napríklad schválený skript k fáze 3."}),filesBlock("","")));
   V.append(el("div",{class:"block"},el("h3",{text:"Poučenia z tohto videa"}),fieldInput("Čo zapísať do šablóny alebo nacenenia","poucenia","textarea",{rows:4}),
     el("div",null,el("button",{class:"btn-line danger",type:"button",id:"d-del",text:"Zmazať projekt",onclick:delProject}))));
   fillDetail(true);applyReadOnly();
@@ -372,10 +386,92 @@ function fillDetail(force){
   });
   const chips=$("#d-typ-B");if(chips){const vals=(p.typ&&p.typ.B)||[];chips.querySelectorAll(".chipbtn").forEach(b=>b.setAttribute("aria-pressed",vals.includes(b.dataset.val)?"true":"false"))}
   document.querySelectorAll("#view-detail .seg").forEach(s=>markSeg(s,(p.kroky||{})[s.dataset.step]||""));
+  renderFiles(p);
   const t=totals(p);const marks=Object.values(p.kroky||{}).filter(Boolean);
   const verz=PHASES.reduce((a,f)=>a+(num(((p.fazy||{})[f.id]||{}).verzie)||0),0);
   const S=$("#d-sum");S.textContent="";
-  [[t.h==null?"–":fmt(t.h),"hodín spolu"],[t.kr==null?"–":fmt(t.kr,0),"kreditov spolu"],[verz||"–","verzií a kôl"],[marks.length+" / 26","označených krokov"],[(p.zalozil||names[p.autor]||"–"),"založil(a)"]].forEach(([v,l])=>S.append(el("div",null,el("div",{class:"v",text:String(v)}),el("div",{class:"l",text:l}))));
+  [[t.h==null?"–":fmt(t.h),"hodín spolu"],[t.kr==null?"–":fmt(t.kr,0),"kreditov spolu"],[verz||"–","verzií a kôl"],[marks.length+" / 26","označených krokov"],[fileList(p).length||"–","súborov"],[(p.zalozil||names[p.autor]||"–"),"založil(a)"]].forEach(([v,l])=>S.append(el("div",null,el("div",{class:"v",text:String(v)}),el("div",{class:"l",text:l}))));
+}
+/* ---------- súbory k projektu ---------- */
+const KUS=4*1024*1024; // musí sedieť s KUS v netlify/functions/dennik.mjs
+const PRIPONY="pdf,txt,md,rtf,srt,vtt,csv,json,doc,docx,xls,xlsx,ppt,pptx,odt,ods,pages,key,numbers,jpg,jpeg,png,webp,gif,heic,mp4,mov,webm,m4v,mp3,wav,m4a,aac,zip".split(",");
+const ZOBRAZIT=/^(application\/pdf|image\/|video\/|audio\/|text\/plain)/;
+const pripona=n=>((/\.([a-z0-9]{1,8})$/i.exec(n||"")||[])[1]||"").toLowerCase();
+function fileList(p){const o=(p&&p.subory)||{};return Object.keys(o).map(id=>Object.assign({id},o[id])).filter(f=>f.velkost||f.odkaz).sort((a,b)=>String(a.cas).localeCompare(String(b.cas)))}
+function velkost(b){return b>=1048576?fmt(b/1048576)+" MB":Math.max(1,Math.round(b/1024))+" kB"}
+function datumKratko(iso){try{return new Date(iso).toLocaleDateString("sk-SK",{day:"numeric",month:"numeric",year:"numeric"})}catch(e){return""}}
+function filesBlock(faza,nadpis){
+  const msg=el("span",{class:"status","aria-live":"polite"});
+  const popis=el("input",{type:"text",placeholder:"Popis, napr. Skript v5, schválený klientom","aria-label":"Popis súboru"});
+  const inp=el("input",{type:"file",multiple:"",hidden:"",accept:PRIPONY.map(x=>"."+x).join(",")});
+  const url=el("input",{type:"text",placeholder:"https://drive.google.com/…","aria-label":"Odkaz",hidden:""});
+  const ulozOdkaz=el("button",{class:"btn-line",type:"button",text:"Uložiť odkaz",hidden:""});
+  const btnOdkaz=el("button",{class:"btn-line",type:"button",text:"Pridať odkaz",onclick:()=>{url.hidden=false;ulozOdkaz.hidden=false;btnOdkaz.hidden=true;url.focus()}});
+  inp.addEventListener("change",async()=>{const files=[...inp.files];inp.value="";for(const f of files){await upload(f,faza,popis.value.trim(),msg)}popis.value=""});
+  const pridajOdkaz=async()=>{const u=url.value.trim();if(!u){url.focus();return}msg.textContent="Ukladám odkaz…";
+    try{await call("POST","/subor",{projekt:openId,id:newId(),odkaz:/^https?:\/\//i.test(u)?u:"https://"+u,popis:popis.value.trim(),faza});url.value="";popis.value="";url.hidden=true;ulozOdkaz.hidden=true;btnOdkaz.hidden=false;msg.textContent="";await refresh()}
+    catch(e){msg.textContent=e.message}};
+  ulozOdkaz.addEventListener("click",pridajOdkaz);url.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();pridajOdkaz()}});
+  return el("div",{class:"files","data-faza":faza},nadpis?el("span",{class:"lbl",text:nadpis}):null,el("div",{class:"flist"}),
+    el("div",{class:"fadd"},popis,el("button",{class:"btn",type:"button",text:"Nahrať súbor",onclick:()=>inp.click()}),btnOdkaz,url,ulozOdkaz,inp,msg));
+}
+function renderFiles(p){
+  const vsetky=fileList(p);const q=queues[openId];
+  document.querySelectorAll("#view-detail .files").forEach(box=>{
+    const L=box.querySelector(".flist");const faza=box.dataset.faza;
+    const moje=vsetky.filter(f=>(f.faza||"")===faza);
+    if(document.activeElement&&L.contains(document.activeElement)&&L.children.length===moje.length)return;
+    L.textContent="";
+    moje.forEach(f=>{
+      const meno=f.odkaz?el("a",{class:"fn",href:f.odkaz,target:"_blank",rel:"noopener noreferrer",text:f.nazov||f.odkaz}):el("button",{class:"fn",type:"button",text:f.nazov,title:"Otvoriť alebo stiahnuť",onclick:()=>stiahni(f)});
+      const pop=el("input",{type:"text",placeholder:"popis","aria-label":"Popis súboru "+(f.nazov||"")});
+      pop.value=(q&&q.pending&&q.pending.subory&&q.pending.subory[f.id]&&q.pending.subory[f.id].popis!=null)?q.pending.subory[f.id].popis:(f.popis||"");
+      pop.addEventListener("input",()=>save(openId,{subory:{[f.id]:{popis:pop.value}}}));
+      const del=el("button",{class:"btn-line danger",type:"button",text:"Zmazať"});
+      del.addEventListener("click",async()=>{
+        if(del.dataset.confirm!=="1"){del.dataset.confirm="1";del.textContent="Naozaj?";setTimeout(()=>{if(del.isConnected){del.dataset.confirm="";del.textContent="Zmazať"}},4000);return}
+        del.disabled=true;try{await call("DELETE","/subor?projekt="+encodeURIComponent(openId)+"&id="+encodeURIComponent(f.id));await refresh()}catch(e){banner("Súbor sa nepodarilo zmazať ("+e.message+").");del.disabled=false}
+      });
+      L.append(el("div",{class:"file"},meno,pop,el("span",{class:"meta",text:[f.odkaz?"odkaz":velkost(f.velkost),datumKratko(f.cas)].filter(Boolean).join(" · ")}),del));
+    });
+    box.querySelectorAll("input,button").forEach(x=>{if(!x.classList.contains("fn"))x.disabled=!canWrite});
+  });
+}
+async function upload(file,faza,popis,msg){
+  const ext=pripona(file.name);
+  if(!PRIPONY.includes(ext)){msg.textContent="Súbor "+file.name+" sa nedá nahrať. Povolené sú dokumenty, obrázky, videá, zvuk a ZIP.";return}
+  if(file.size>200*1024*1024){msg.textContent="Súbor "+file.name+" má viac ako 200 MB. Dajte ho na Google Drive a pridajte odkaz.";return}
+  if(!file.size){msg.textContent="Súbor "+file.name+" je prázdny.";return}
+  const projekt=openId,id=newId(),spolu=Math.ceil(file.size/KUS);
+  try{
+    for(let i=0;i<spolu;i++){
+      msg.textContent="Nahrávam "+file.name+" ("+Math.round(i/spolu*100)+" %)…";
+      let pokus=0;
+      for(;;){
+        const r=await fetch(API+"/subor?projekt="+encodeURIComponent(projekt)+"&id="+id+"&cast="+i+"&spolu="+spolu+"&velkost="+file.size,{method:"PUT",headers:{"x-heslo":heslo()},body:file.slice(i*KUS,(i+1)*KUS)});
+        if(r.ok)break;
+        const j=await r.json().catch(()=>({}));
+        if(r.status>=500&&++pokus<3){await new Promise(z=>setTimeout(z,1500*pokus));continue}
+        throw new Error(j.chyba||String(r.status));
+      }
+    }
+    msg.textContent="Dokončujem "+file.name+"…";
+    await call("POST","/subor",{projekt,id,nazov:file.name,velkost:file.size,popis,faza});
+    msg.textContent="";await refresh();
+  }catch(e){msg.textContent="Súbor "+file.name+" sa nenahral: "+e.message}
+}
+async function stiahni(f){
+  const zobraz=ZOBRAZIT.test(f.typ||"");
+  const w=zobraz?window.open("","_blank"):null;
+  try{
+    const r=await fetch(API+"/subor?projekt="+encodeURIComponent(openId)+"&id="+encodeURIComponent(f.id),{headers:{"x-heslo":heslo()},cache:"no-store"});
+    if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error(j.chyba||String(r.status))}
+    const blob=new Blob([await r.blob()],{type:(f.typ||"application/octet-stream").split(";")[0]});
+    const u=URL.createObjectURL(blob);
+    if(w){w.location.href=u}
+    else{const a=el("a",{href:u,download:f.nazov||"subor"});document.body.append(a);a.click();a.remove()}
+    setTimeout(()=>URL.revokeObjectURL(u),60000);
+  }catch(e){if(w)w.close();banner("Súbor sa nepodarilo otvoriť ("+e.message+").")}
 }
 async function delProject(){
   const b=$("#d-del");
