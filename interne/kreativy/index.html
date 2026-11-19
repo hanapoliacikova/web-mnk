@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="/schvalovanie/app.css?v=2">
-  <link rel="stylesheet" href="/interne/kreativy/kreativy.css?v=1">
-  <script src="/interne/kreativy/kreativy.js?v=1" defer></script>
+  <link rel="stylesheet" href="/interne/kreativy/kreativy.css?v=2">
+  <script src="/interne/kreativy/kreativy.js?v=2" defer></script>
 </head>
 <body>
 <header class="wrap s-head">
@@ -59,6 +59,9 @@
         <label class="e-f"><span class="lbl">Kampaň</span><input data-k="kampan" maxlength="160"></label>
         <label class="e-f"><span class="lbl">Kanál</span><input data-k="kanal" maxlength="120" placeholder="Napríklad Meta (Facebook, Instagram)"></label>
         <label class="e-f"><span class="lbl">Termín schválenia</span><input data-k="termin" type="date"></label>
+        <label class="e-f e-wide"><span class="lbl">Priečinok klienta na Google Drive (odkaz)</span><input data-k="drive" maxlength="300" placeholder="https://drive.google.com/drive/folders/…">
+          <span class="e-hint">Vložte odkaz na hlavný priečinok klienta. Kreatívy sa do 5 minút po uložení alebo rozhodnutí klienta skopírujú do jeho zložky GRAFIKA (2 NA SCHVÁLENÍ, 3 NA ÚPRAVU, 4 SCHVÁLENÉ, 5 ARCHÍV) a do tabuľky Stav kreatív.</span>
+          <span class="e-drive" id="drive-stav"></span></label>
         <label class="e-f e-wide"><span class="lbl">Úvod pre klienta (nepovinné)</span><textarea data-k="uvod" maxlength="1000" placeholder="Ak necháte prázdne, klient uvidí: Pri každom variante kliknite na Schváliť, alebo na Upraviť a napíšte, čo zmeniť."></textarea></label>
       </div>
     </div>
