@@ -21,7 +21,7 @@ Menu a pätička sú v každej stránke rovnaké. Pri zmene ich treba upraviť v
 
 ## Blog
 
-Nový článok: skopíruj priečinok existujúceho článku v `blog/`, premenuj ho na adresu článku, uprav texty (title, description, canonical, JSON-LD, obsah) a pridaj odkaz na začiatok zoznamu v `blog/index.html` a riadok do `sitemap.xml`. Blog je zatiaľ len po slovensky, česká verzia v menu odkazuje na slovenský blog.
+Nový článok: skopíruj priečinok existujúceho článku v `blog/`, premenuj ho na adresu článku, uprav texty (title, description, canonical, JSON-LD, obsah) a pridaj odkaz na začiatok zoznamu v `blog/index.html` a riadok do `sitemap.xml`. Česká verzia: pridaj článok do `PAGES` (a adresu do `LINKS`) v `tools/cz/build.py`, nadpis a adresu do `JSONLD`, preklady textov do `tools/cz/preklad.json`, spusti `python3 tools/cz/build.py` a pridaj riadok do `cz/sitemap.xml`.
 
 ## Lokálny náhľad
 

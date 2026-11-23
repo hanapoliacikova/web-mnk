@@ -20,10 +20,22 @@ PAGES = [  # sk file, cz file, sk url, cz url
     ('tim/index.html', 'cz/tym/index.html', '/tim/', '/tym/'),
     ('kalkulacka/index.html', 'cz/kalkulacka/index.html', '/kalkulacka/', '/kalkulacka/'),
     ('dakujeme/index.html', 'cz/dekujeme/index.html', '/dakujeme/', '/dekujeme/'),
+    ('blog/index.html', 'cz/blog/index.html', '/blog/', '/blog/'),
+    ('blog/ai-verzus-specialista-co-hovoria-studie/index.html', 'cz/blog/ai-versus-specialista-co-rikaji-studie/index.html',
+     '/blog/ai-verzus-specialista-co-hovoria-studie/', '/blog/ai-versus-specialista-co-rikaji-studie/'),
     ('404.html', 'cz/404.html', None, None),
 ]
 LINKS = {'/ako-pracujeme-s-ai/': '/jak-pracujeme-s-ai/', '/tim/': '/tym/', '/dakujeme/': '/dekujeme/',
-         '/blog/': 'https://marketingnakluc.sk/blog/'}  # blog je zatiaľ len po slovensky
+         '/blog/ai-verzus-specialista-co-hovoria-studie/': '/blog/ai-versus-specialista-co-rikaji-studie/'}
+# Texty v JSON-LD (v <script>) skript neprekladá, preto náhrady zvlášť
+JSONLD = [
+    ('"headline":"AI verzus špecialista: čo hovoria dáta"', '"headline":"AI versus specialista: co říkají data"'),
+    ('"inLanguage":"sk"', '"inLanguage":"cs"'),
+    ('"name":"Marketing na kľúč"', '"name":"Marketing na klíč"'),
+    ('"url":"https://marketingnakluc.sk/"', '"url":"https://marketingnaklic.cz/"'),
+    ('"mainEntityOfPage":"https://marketingnakluc.sk/blog/ai-verzus-specialista-co-hovoria-studie/"',
+     '"mainEntityOfPage":"https://marketingnaklic.cz/blog/ai-versus-specialista-co-rikaji-studie/"'),
+]
 ATTRS = ('alt', 'title', 'aria-label', 'content', 'placeholder', 'value')
 
 KALK = [
@@ -112,6 +124,8 @@ for sk_f, cz_f, sk_url, cz_url in PAGES:
     cz = cz.replace('href="tel:+421911239151">+421 911 239 151<', 'href="tel:+420605949008">+420 605 949 008<')
     cz = cz.replace('<p>Karpatské námestie 10A, 831 06 Bratislava &nbsp;·&nbsp; IČO 50366335 &nbsp;·&nbsp;', '<p>Poliačiky consulting s.r.o. &nbsp;·&nbsp; Školská 660/3, Nové Město, 110 00 Praha 1 &nbsp;·&nbsp; IČO 225 65 493 &nbsp;·&nbsp;')
     cz = cz.replace('chcem@marketingnakluc.sk', 'chci@marketingnaklic.cz')
+    for a, b in JSONLD:
+        cz = cz.replace(a, b)
     if 'kalkulacka' in sk_f:
         for a, b in KALK:
             cz = cz.replace(a, b)
