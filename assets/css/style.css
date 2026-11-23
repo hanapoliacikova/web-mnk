@@ -129,7 +129,7 @@ ul, ol { padding: 0; list-style: none; }
 .nav__toggle { display: none; background: none; border: 0; padding: 8px; cursor: pointer; color: var(--ink); }
 .nav__toggle span { display: block; width: 26px; height: 2px; background: currentColor; margin: 6px 0; }
 
-@media (max-width: 1080px) {
+@media (max-width: 1180px) {
   .nav__toggle { display: block; }
   .nav__menu {
     display: none;
@@ -317,3 +317,24 @@ img.plagat { width: 100%; height: auto; object-fit: contain; display: block; }
 @media (max-width: 640px) { .ai-ukazka { grid-template-columns: 1fr; } .ai-ukazka figure:last-child { max-width: 260px; } }
 .nav__lang { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-decoration: none; border: 1.5px solid currentColor; border-radius: 4px; padding: 4px 8px; line-height: 1; }
 .nav__lang:hover { color: var(--petrol); }
+
+/* Blog */
+.clanok { max-width: 760px; margin: 0 auto; padding-bottom: var(--sekcia); display: flex; flex-direction: column; gap: 20px; }
+.clanok h2 { font-family: 'Bebas Neue', Impact, sans-serif; font-weight: 400; line-height: .92; font-size: clamp(36px, 4vw, 52px); margin-top: 32px; }
+.clanok h3 { font-size: 20px; font-weight: 700; margin-top: 12px; }
+.clanok ul { list-style: disc; padding-left: 22px; display: grid; gap: 8px; }
+.clanok ol { list-style: decimal; padding-left: 22px; display: grid; gap: 10px; }
+.clanok a { color: var(--petrol); text-decoration-thickness: 2px; }
+.clanok__meta { font-size: 15px; color: var(--seda); }
+.fakt { background: var(--mata); border-top: 6px solid var(--petrol); padding: 24px 28px; display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline; }
+.fakt--ai { border-top-color: var(--tyrkys); }
+.fakt .bb { font-size: clamp(56px, 7vw, 80px); color: var(--petrol); line-height: .9; }
+.fakt p { flex: 1 1 260px; }
+.pozor { border-left: 6px solid var(--tyrkys); padding: 4px 0 4px 20px; }
+.zdroje { font-size: 15px; color: var(--seda); }
+.zdroje li { overflow-wrap: anywhere; }
+.blog-zoznam { display: grid; gap: 0; border-top: 1px solid var(--linka); }
+.blog-zoznam a { display: grid; gap: 8px; padding: 28px 0; border-bottom: 1px solid var(--linka); text-decoration: none; }
+.blog-zoznam a:hover .bb { color: var(--petrol); }
+.blog-zoznam .bb { font-size: clamp(32px, 3.6vw, 48px); }
+@media (min-width: 1181px) and (max-width: 1340px) { .nav__links { column-gap: 18px; } .nav__menu { gap: 20px; } }

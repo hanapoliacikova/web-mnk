@@ -22,7 +22,8 @@ PAGES = [  # sk file, cz file, sk url, cz url
     ('dakujeme/index.html', 'cz/dekujeme/index.html', '/dakujeme/', '/dekujeme/'),
     ('404.html', 'cz/404.html', None, None),
 ]
-LINKS = {'/ako-pracujeme-s-ai/': '/jak-pracujeme-s-ai/', '/tim/': '/tym/', '/dakujeme/': '/dekujeme/'}
+LINKS = {'/ako-pracujeme-s-ai/': '/jak-pracujeme-s-ai/', '/tim/': '/tym/', '/dakujeme/': '/dekujeme/',
+         '/blog/': 'https://marketingnakluc.sk/blog/'}  # blog je zatiaľ len po slovensky
 ATTRS = ('alt', 'title', 'aria-label', 'content', 'placeholder', 'value')
 
 KALK = [

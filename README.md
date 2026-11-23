@@ -11,11 +11,17 @@ Statický web Marketing na kľúč. Žiadny build, čisté HTML a CSS.
 | MNK Studio | `studio/index.html` |
 | Filmový marketing | `filmovy-marketing/index.html` |
 | Tím | `tim/index.html` |
+| Blog (zoznam článkov) | `blog/index.html` |
+| Článok blogu | `blog/<adresa-clanku>/index.html` |
 | Poďakovanie po odoslaní formulára | `dakujeme/index.html` |
 
 Štýly sú v `assets/css/style.css` (farby ako premenné na začiatku), skript pre mobilné menu a filter portfólia v `assets/js/main.js`, fotky a logo v `assets/img/`.
 
 Menu a pätička sú v každej stránke rovnaké. Pri zmene ich treba upraviť vo všetkých `index.html`.
+
+## Blog
+
+Nový článok: skopíruj priečinok existujúceho článku v `blog/`, premenuj ho na adresu článku, uprav texty (title, description, canonical, JSON-LD, obsah) a pridaj odkaz na začiatok zoznamu v `blog/index.html` a riadok do `sitemap.xml`. Blog je zatiaľ len po slovensky, česká verzia v menu odkazuje na slovenský blog.
 
 ## Lokálny náhľad
 
