@@ -79,3 +79,12 @@ Nové kolo: pridať varianty s novým `id` (napr. `a2`), staré rozhodnutia osta
 Rozcestník `/interne/` vedie na Prehľad schvaľovania a na **Denník AI videí** (`/interne/dennik-ai-videi/`). Denník je prenesený z artefaktu v Claude: projekty, hodiny, kredity a kroky po fázach sa ukladajú cez `netlify/functions/dennik.mjs` do Netlify Blobs (store `dennik`). Projekty z pôvodného artefaktu sa zapíšu pri prvom otvorení (`netlify/dennik-seed.mjs`).
 
 Všetky interné stránky chráni jedno heslo tímu, premenná `TIM_HESLO` v Netlify. Majú noindex a sú vylúčené v `robots.txt`; nikam z verejného webu na ne nevedie odkaz.
+
+## MNK Plán (marketingnakluc.sk/interne/plan/)
+
+Plánovanie postov na sociálne siete, náhrada Kontentina. Každý člen tímu má vlastné prihlasovacie meno a heslo. Účty zakladá správca v časti **Tím** po zadaní hesla tímu (`TIM_HESLO`), kolega si potom heslo zmení cez Zmeniť heslo.
+
+- **Klienti a kampane:** klient, jeho účty na sieťach (Instagram, Facebook, TikTok, LinkedIn) a kampane (napr. filmy) s farbou v kalendári.
+- **Kalendár:** mesiac, filter klient a kampaň, nový post kliknutím na deň, presun potiahnutím. Na mobile sa ukáže ako zoznam dní s postami.
+
+Dáta ukladá `netlify/functions/plan.mjs` do Netlify Blobs (store `plan`). Heslá sú uložené ako scrypt hash, prihlásenie platí 30 dní. Ďalšie kroky (vizuály a náhľad postu, schvaľovanie klientom, PDF export, automatické zverejnenie) sú opísané v návrhu MNK Plán.

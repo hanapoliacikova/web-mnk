@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>MNK Plán | Marketing na kľúč</title>
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/schvalovanie/app.css?v=2">
+  <link rel="stylesheet" href="/interne/kreativy/kreativy.css?v=2">
+  <link rel="stylesheet" href="/interne/plan/plan.css?v=1">
+  <script src="/interne/plan/plan.js?v=1" defer></script>
+</head>
+<body>
+<header class="wrap s-head">
+  <div>
+    <a class="s-logo" href="/interne/" aria-label="Interné nástroje"><img src="/assets/img/logo.png" alt="Marketing na kľúč" width="100" height="40"></a>
+    <h1 class="bb s-title">MNK Plán</h1>
+    <div class="s-meta">Plán postov na sociálne siete pre klientov.</div>
+  </div>
+  <nav class="p-nav" id="nav" hidden>
+    <a href="#kalendar" data-v="kalendar">Kalendár</a>
+    <a href="#klienti" data-v="klienti">Klienti a kampane</a>
+    <a href="#tim" data-v="tim">Tím</a>
+    <span class="p-ja"><span id="ja"></span>
+      <button class="btn link" type="button" id="zmena-hesla">Zmeniť heslo</button>
+      <button class="btn link" type="button" id="odhlasit">Odhlásiť</button></span>
+  </nav>
+</header>
+
+<main class="wrap">
+  <form class="p-card p-login" id="login" hidden>
+    <h2 class="bb">Prihlásenie</h2>
+    <label class="e-f"><span class="lbl">Prihlasovacie meno</span><input id="l-login" autocomplete="username" autocapitalize="none" required></label>
+    <label class="e-f"><span class="lbl">Heslo</span><input id="l-heslo" type="password" autocomplete="current-password" required></label>
+    <button class="btn primary" type="submit">Prihlásiť</button>
+    <p class="e-hint">Účet vám založí Hana v časti Tím. Kto ešte nemá účet, otvorí <a href="#tim">Tím</a> s heslom tímu.</p>
+    <div class="s-msg" id="login-msg" role="status"></div>
+  </form>
+
+  <!-- kalendár -->
+  <section id="v-kalendar" hidden>
+    <div class="p-bar">
+      <div class="p-mesiac">
+        <button class="btn" type="button" id="m-pred" aria-label="Predchádzajúci mesiac">‹</button>
+        <h2 class="bb" id="m-nazov"></h2>
+        <button class="btn" type="button" id="m-dalsi" aria-label="Nasledujúci mesiac">›</button>
+        <button class="btn link" type="button" id="m-dnes">Dnes</button>
+      </div>
+      <div class="p-filtre">
+        <label class="e-f"><span class="lbl">Klient</span><select id="f-klient"></select></label>
+        <label class="e-f"><span class="lbl">Kampaň</span><select id="f-kampan"></select></label>
+        <button class="btn primary" type="button" id="novy-post">+ Nový post</button>
+      </div>
+    </div>
+    <div class="p-kal" id="kal" aria-live="polite"></div>
+    <p class="e-hint">Post presuniete na iný deň potiahnutím. Kliknutím na deň pridáte nový post.</p>
+  </section>
+
+  <!-- klienti -->
+  <section id="v-klienti" hidden>
+    <form class="p-card e-row" id="novy-klient">
+      <label class="e-f"><span class="lbl">Nový klient</span><input name="nazov" required maxlength="120" placeholder="Napríklad Cinemart"></label>
+      <button class="btn primary" type="submit">Pridať klienta</button>
+    </form>
+    <div id="klienti" class="p-klienti"></div>
+  </section>
+
+  <!-- tím -->
+  <section id="v-tim" hidden>
+    <form class="p-card e-row" id="tim-login">
+      <label class="e-f"><span class="lbl">Heslo tímu (rovnaké ako pri kreatívach)</span><input id="tim-heslo" type="password" autocomplete="off" required></label>
+      <button class="btn primary" type="submit">Otvoriť správu tímu</button>
+    </form>
+    <div id="tim" hidden>
+      <form class="p-card" id="novy-clovek">
+        <h2 class="bb">Nový člen tímu</h2>
+        <div class="e-grid">
+          <label class="e-f"><span class="lbl">Celé meno</span><input name="meno" required maxlength="80" placeholder="Martina Kostolanská"></label>
+          <label class="e-f"><span class="lbl">Prihlasovacie meno</span><input name="login" required maxlength="32" autocapitalize="none" placeholder="martina"></label>
+          <label class="e-f"><span class="lbl">Prvé heslo (aspoň 8 znakov)</span><input name="heslo" required minlength="8" autocomplete="new-password"></label>
+        </div>
+        <button class="btn primary" type="submit">Založiť účet</button>
+        <p class="e-hint">Heslo pošlite kolegovi osobne. Po prihlásení si ho zmení cez Zmeniť heslo.</p>
+      </form>
+      <div class="p-ludia" id="ludia"></div>
+    </div>
+  </section>
+  <div class="s-msg" id="sprava" role="status"></div>
+</main>
+
+<dialog class="p-dlg" id="dlg-post">
+  <form method="dialog" id="f-post">
+    <div class="p-dlg-head">
+      <h2 class="bb" id="post-titul">Nový post</h2>
+      <span class="p-stav" id="post-stav">Koncept</span>
+    </div>
+    <div class="e-grid">
+      <label class="e-f"><span class="lbl">Klient</span><select name="klient" required></select></label>
+      <label class="e-f"><span class="lbl">Kampaň</span><select name="kampan"></select></label>
+      <label class="e-f"><span class="lbl">Dátum</span><input name="datum" type="date" required></label>
+      <label class="e-f"><span class="lbl">Čas</span><input name="cas" type="time"></label>
+      <label class="e-f"><span class="lbl">Typ</span><select name="typ">
+        <option value="post">Post (fotka)</option><option value="karusel">Karusel</option><option value="reels">Reels</option>
+        <option value="story">Story</option><option value="video">Video</option><option value="text">Len text</option></select></label>
+      <fieldset class="e-f p-siete"><legend class="lbl">Siete</legend><div id="post-siete"></div></fieldset>
+      <label class="e-f e-wide"><span class="lbl">Interný názov (nepovinné)</span><input name="nazov" maxlength="120" placeholder="Napríklad Premiéra, fotky z akcie"></label>
+      <label class="e-f e-wide"><span class="lbl">Text postu</span><textarea name="text" maxlength="5000" rows="7"></textarea><span class="e-hint" id="post-znaky"></span></label>
+      <label class="e-f e-wide"><span class="lbl">Poznámka pre tím (klient ju neuvidí)</span><textarea name="poznamka" maxlength="1000" rows="2"></textarea></label>
+    </div>
+    <p class="e-hint" id="post-info"></p>
+    <p class="e-hint">Vizuály, náhľad ako na sieti a posielanie na schválenie pribudnú v ďalšom kroku.</p>
+    <div class="p-dlg-btns">
+      <button class="btn link" type="button" id="post-zmazat">Zmazať post</button>
+      <span class="p-grow"></span>
+      <button class="btn" type="button" id="post-zrusit">Zrušiť</button>
+      <button class="btn primary" type="submit" id="post-ulozit">Uložiť</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="p-dlg p-dlg-maly" id="dlg-heslo">
+  <form method="dialog" id="f-heslo">
+    <h2 class="bb">Zmeniť heslo</h2>
+    <label class="e-f"><span class="lbl">Súčasné heslo</span><input name="stare" type="password" autocomplete="current-password" required></label>
+    <label class="e-f"><span class="lbl">Nové heslo (aspoň 8 znakov)</span><input name="nove" type="password" minlength="8" autocomplete="new-password" required></label>
+    <div class="p-dlg-btns"><span class="p-grow"></span>
+      <button class="btn" type="button" data-zavriet>Zrušiť</button>
+      <button class="btn primary" type="submit">Uložiť</button></div>
+  </form>
+</dialog>
+<div class="toast" id="toast" hidden></div>
+</body>
+</html>
