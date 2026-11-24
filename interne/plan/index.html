@@ -11,8 +11,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="/schvalovanie/app.css?v=2">
   <link rel="stylesheet" href="/interne/kreativy/kreativy.css?v=2">
-  <link rel="stylesheet" href="/interne/plan/plan.css?v=1">
-  <script src="/interne/plan/plan.js?v=1" defer></script>
+  <link rel="stylesheet" href="/interne/plan/plan.css?v=2">
+  <script src="/interne/plan/plan.js?v=2" defer></script>
 </head>
 <body>
 <header class="wrap s-head">
@@ -92,27 +92,37 @@
   <div class="s-msg" id="sprava" role="status"></div>
 </main>
 
-<dialog class="p-dlg" id="dlg-post">
+<dialog class="p-dlg p-dlg-post" id="dlg-post">
   <form method="dialog" id="f-post">
     <div class="p-dlg-head">
       <h2 class="bb" id="post-titul">Nový post</h2>
       <span class="p-stav" id="post-stav">Koncept</span>
     </div>
-    <div class="e-grid">
-      <label class="e-f"><span class="lbl">Klient</span><select name="klient" required></select></label>
-      <label class="e-f"><span class="lbl">Kampaň</span><select name="kampan"></select></label>
-      <label class="e-f"><span class="lbl">Dátum</span><input name="datum" type="date" required></label>
-      <label class="e-f"><span class="lbl">Čas</span><input name="cas" type="time"></label>
-      <label class="e-f"><span class="lbl">Typ</span><select name="typ">
-        <option value="post">Post (fotka)</option><option value="karusel">Karusel</option><option value="reels">Reels</option>
-        <option value="story">Story</option><option value="video">Video</option><option value="text">Len text</option></select></label>
-      <fieldset class="e-f p-siete"><legend class="lbl">Siete</legend><div id="post-siete"></div></fieldset>
-      <label class="e-f e-wide"><span class="lbl">Interný názov (nepovinné)</span><input name="nazov" maxlength="120" placeholder="Napríklad Premiéra, fotky z akcie"></label>
-      <label class="e-f e-wide"><span class="lbl">Text postu</span><textarea name="text" maxlength="5000" rows="7"></textarea><span class="e-hint" id="post-znaky"></span></label>
-      <label class="e-f e-wide"><span class="lbl">Poznámka pre tím (klient ju neuvidí)</span><textarea name="poznamka" maxlength="1000" rows="2"></textarea></label>
+    <div class="p-dlg-body">
+      <div class="e-grid">
+        <label class="e-f"><span class="lbl">Klient</span><select name="klient" required></select></label>
+        <label class="e-f"><span class="lbl">Kampaň</span><select name="kampan"></select></label>
+        <label class="e-f"><span class="lbl">Dátum</span><input name="datum" type="date" required></label>
+        <label class="e-f"><span class="lbl">Čas</span><input name="cas" type="time"></label>
+        <label class="e-f"><span class="lbl">Typ</span><select name="typ">
+          <option value="post">Post (fotka)</option><option value="karusel">Karusel</option><option value="reels">Reels</option>
+          <option value="story">Story</option><option value="video">Video</option><option value="text">Len text</option></select></label>
+        <fieldset class="e-f p-siete"><legend class="lbl">Siete</legend><div id="post-siete"></div></fieldset>
+        <div class="e-f e-wide"><span class="lbl">Vizuály (viac obrázkov = karusel)</span>
+          <div class="p-media" id="post-media"></div>
+          <label class="btn p-nahrat">+ Pridať obrázky alebo video<input type="file" id="post-subory" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm" multiple hidden></label>
+        </div>
+        <label class="e-f e-wide"><span class="lbl">Text postu</span><textarea name="text" maxlength="5000" rows="7"></textarea><span class="e-hint" id="post-znaky"></span></label>
+        <label class="e-f e-wide"><span class="lbl">Interný názov (nepovinné)</span><input name="nazov" maxlength="120" placeholder="Napríklad Premiéra, fotky z akcie"></label>
+        <label class="e-f e-wide"><span class="lbl">Poznámka pre tím (klient ju neuvidí)</span><textarea name="poznamka" maxlength="1000" rows="2"></textarea></label>
+      </div>
+      <aside class="p-nahlad" aria-label="Náhľad postu">
+        <div class="p-nahlad-tabs" id="nahlad-tabs" role="tablist"></div>
+        <div id="nahlad"></div>
+        <p class="e-hint">Náhľad je orientačný. Sieť môže text skrátiť alebo orezať obrázok inak.</p>
+      </aside>
     </div>
     <p class="e-hint" id="post-info"></p>
-    <p class="e-hint">Vizuály, náhľad ako na sieti a posielanie na schválenie pribudnú v ďalšom kroku.</p>
     <div class="p-dlg-btns">
       <button class="btn link" type="button" id="post-zmazat">Zmazať post</button>
       <span class="p-grow"></span>

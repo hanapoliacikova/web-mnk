@@ -86,5 +86,6 @@ Plánovanie postov na sociálne siete, náhrada Kontentina. Každý člen tímu 
 
 - **Klienti a kampane:** klient, jeho účty na sieťach (Instagram, Facebook, TikTok, LinkedIn) a kampane (napr. filmy) s farbou v kalendári.
 - **Kalendár:** mesiac, filter klient a kampaň, nový post kliknutím na deň, presun potiahnutím. Na mobile sa ukáže ako zoznam dní s postami.
+- **Post:** vizuály (obrázky aj video do 200 MB, viac súborov = karusel, poradie šípkami), text, siete a náhľad, ako bude post vyzerať na Instagrame (feed, karusel, Reels, Story), Facebooku, TikToku a LinkedIne. Veľké fotky sa pri nahrávaní zmenšia na 2400 px. Vizuály sa ukladajú do store `plan` pod `subory/<klient>/` a zmažú sa spolu s postom.
 
 Dáta ukladá `netlify/functions/plan.mjs` do Netlify Blobs (store `plan`). Heslá sú uložené ako scrypt hash, prihlásenie platí 30 dní. Ďalšie kroky (vizuály a náhľad postu, schvaľovanie klientom, PDF export, automatické zverejnenie) sú opísané v návrhu MNK Plán.
