@@ -1,0 +1,98 @@
+/* MNK Plán: kalendár postov pre tím (nadväzuje na /schvalovanie/app.css a /interne/kreativy/kreativy.css) */
+.p-card { background: var(--biela); border: 1px solid var(--linka); border-radius: 12px; padding: 18px; }
+.p-card h2 { font-size: 30px; margin: 0 0 12px; }
+.p-login { margin-block: 8px 64px; }
+.e-f select { padding: 9px 12px; border: 1px solid var(--linka); border-radius: 8px; background: var(--krem); width: 100%; font: inherit; }
+
+.p-nav { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
+.p-nav a { color: var(--ink); font-weight: 600; text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
+.p-nav a[aria-current="page"] { border-color: var(--petrol); color: var(--petrol); }
+.p-ja { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; color: var(--seda); font-size: 14px; }
+
+/* lišta nad kalendárom */
+.p-bar { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
+.p-mesiac { display: flex; align-items: center; gap: 8px; }
+.p-mesiac h2 { font-size: 40px; margin: 0 6px; min-width: 7ch; }
+.p-mesiac .btn:not(.link) { padding: 6px 14px; font-size: 18px; }
+.p-filtre { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.p-filtre .e-f { min-width: 170px; }
+
+/* kalendár */
+.p-kal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid var(--linka); border-radius: 12px; overflow: hidden; background: var(--linka); gap: 1px; }
+.p-hd { background: var(--mata); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--seda); padding: 8px 10px; }
+.p-den { background: var(--biela); min-height: 128px; padding: 6px; display: flex; flex-direction: column; gap: 4px; min-width: 0; cursor: pointer; }
+.p-den.mimo { background: var(--krem); }
+.p-den.mimo .p-cislo { color: var(--linka); }
+.p-den.dnes .p-cislo { background: var(--petrol); color: #fff; }
+.p-den.ciel { outline: 2px dashed var(--petrol); outline-offset: -3px; background: var(--mata); }
+.p-den-hd { display: flex; align-items: center; justify-content: space-between; }
+.p-cislo { font-size: 13px; font-weight: 700; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
+.p-den-nazov { display: none; }
+.p-plus { border: 0; background: none; color: var(--petrol); font-size: 18px; line-height: 1; width: 26px; height: 26px; border-radius: 6px; opacity: 0; }
+.p-den:hover .p-plus, .p-plus:focus-visible { opacity: 1; }
+.p-plus:hover { background: var(--mata); }
+
+.p-post { display: block; width: 100%; text-align: left; background: var(--krem); border: 1px solid var(--linka); border-left: 4px solid var(--farba, var(--petrol)); border-radius: 6px; padding: 4px 6px; font-size: 12px; line-height: 1.35; cursor: grab; min-width: 0; }
+.p-post:hover { border-color: var(--petrol); border-left-color: var(--farba, var(--petrol)); }
+.p-post.tahany { opacity: .4; }
+.p-post-meta { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; color: var(--seda); }
+.p-post-meta b { color: var(--ink); font-weight: 700; }
+.p-post-t { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.p-post-k { display: block; font-size: 11px; color: var(--seda); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p-s { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .04em; padding: 0 4px; border-radius: 3px; color: #fff; line-height: 15px; }
+.p-s.ig { background: #B4307A; } .p-s.fb { background: #1F5FBF; } .p-s.tiktok { background: #111; } .p-s.linkedin { background: #0A66C2; }
+
+/* stav postu */
+.p-stav { font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 99px; background: var(--caka-bg); color: var(--caka); }
+
+/* dialógy */
+.p-dlg { border: 0; border-radius: 14px; padding: 0; width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 24px); background: var(--biela); color: var(--ink); box-shadow: 0 20px 60px rgba(20,48,47,.25); }
+.p-dlg::backdrop { background: rgba(20,48,47,.45); }
+.p-dlg form { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.p-dlg h2 { font-size: 34px; margin: 0; }
+.p-dlg-maly { width: min(420px, calc(100vw - 24px)); }
+.p-dlg-head { display: flex; align-items: center; gap: 12px; justify-content: space-between; }
+.p-dlg-btns { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; position: sticky; bottom: -20px; background: var(--biela); padding-block: 10px; margin-bottom: -10px; }
+.p-grow { flex: 1; }
+.p-siete { border: 0; padding: 0; margin: 0; }
+.p-siete > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; padding-top: 6px; }
+.p-siete label { display: flex; gap: 6px; align-items: baseline; font-size: 14px; flex-wrap: wrap; }
+.p-siete small { flex-basis: 100%; padding-left: 22px; margin-top: -4px; }
+.e-f .p-siete input[type="checkbox"], .p-siete input[type="checkbox"] { width: auto; padding: 0; margin: 0; flex: none; }
+#post-zmazat { color: var(--uprava); }
+
+/* klienti */
+.p-klienti { display: flex; flex-direction: column; gap: 16px; padding-block: 16px 64px; }
+.p-klient h3 { margin: 0; font-family: 'Bebas Neue', Impact, sans-serif; font-weight: 400; font-size: 30px; color: var(--petrol); }
+.p-klient-hd { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.p-klient-hd .e-f { flex: 1 1 240px; }
+.p-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.p-cols h4 { margin: 0 0 8px; font-size: 14px; }
+.p-riadok { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+.p-riadok input[type="text"], .p-riadok select { flex: 1; min-width: 0; padding: 7px 10px; border: 1px solid var(--linka); border-radius: 8px; background: var(--krem); font: inherit; font-size: 14px; }
+.p-riadok select { flex: 0 0 120px; }
+.p-riadok input[type="color"] { width: 38px; height: 34px; padding: 2px; border: 1px solid var(--linka); border-radius: 8px; background: var(--biela); flex: none; }
+.p-riadok label { font-size: 12px; color: var(--seda); display: inline-flex; gap: 4px; align-items: center; white-space: nowrap; }
+.p-x { border: 0; background: none; color: var(--seda); font-size: 18px; width: 30px; height: 30px; border-radius: 6px; flex: none; }
+.p-x:hover { background: var(--uprava-bg); color: var(--uprava); }
+.p-klient-btns { display: flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+
+/* tím */
+.p-ludia { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; padding-block: 16px 64px; }
+.p-clovek { display: flex; flex-direction: column; gap: 6px; }
+.p-clovek b { font-size: 17px; }
+.p-clovek.neaktivny { opacity: .55; }
+#v-tim > .p-card, #tim > .p-card { margin-bottom: 4px; }
+
+/* mobil: kalendár ako zoznam dní s postami */
+@media (max-width: 760px) {
+  .p-kal { display: flex; flex-direction: column; background: var(--biela); }
+  .p-hd, .p-den.mimo, .p-den.prazdny { display: none; }
+  .p-den { min-height: 0; border-bottom: 1px solid var(--linka); padding: 10px; }
+  .p-den-nazov { display: inline; font-weight: 600; font-size: 14px; margin-right: auto; padding-left: 6px; }
+  .p-plus { opacity: 1; }
+  .p-post { font-size: 13px; }
+  .p-mesiac h2 { font-size: 32px; }
+}
+.p-prazdny-mobil { display: none; }
+@media (max-width: 760px) { .p-prazdny-mobil { display: block; margin: 12px; } }
