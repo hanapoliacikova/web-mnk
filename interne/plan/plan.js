@@ -8,7 +8,9 @@
   var MESIACE = ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December'];
   var DNI = ['Po', 'Ut', 'St', 'Št', 'Pi', 'So', 'Ne'];
   var DNI_CELE = ['pondelok', 'utorok', 'streda', 'štvrtok', 'piatok', 'sobota', 'nedeľa'];
-  var s = { token: '', ja: null, klienti: [], posty: [], mesiac: '', timHeslo: '', post: null };
+  var KUS = 4 * 1024 * 1024; // musí sedieť s KUS v netlify/functions/plan.mjs
+  var MAX_STRANA = 2400;     // väčšie fotky sa pri nahrávaní zmenšia
+  var s = { token: '', ja: null, klienti: [], posty: [], mesiac: '', timHeslo: '', post: null, media: [], nahrava: 0, nahladSiet: 'ig' };
 
   function esc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
@@ -20,11 +22,14 @@
   function dnes() { return iso(new Date()); }
   function kedy(x) { try { return new Date(x).toLocaleString('sk-SK', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
 
+  function jeVideo(f) { return /\.(mp4|webm|mov)$/i.test(f); }
+  function nahodne(n) { var a = new Uint8Array(n); crypto.getRandomValues(a); return Array.prototype.map.call(a, function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); }
   function api(method, path, body, extra) {
     var o = { method: method, headers: {}, cache: 'no-store' };
     if (s.token) o.headers.Authorization = 'Bearer ' + s.token;
     if (extra) Object.keys(extra).forEach(function (k) { o.headers[k] = extra[k]; });
-    if (body !== undefined) { o.body = JSON.stringify(body); o.headers['Content-Type'] = 'application/json'; }
+    if (body instanceof Blob) o.body = body;
+    else if (body !== undefined) { o.body = JSON.stringify(body); o.headers['Content-Type'] = 'application/json'; }
     return fetch(path, o).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) {
         if (r.status === 401 && path.indexOf('/api/plan/prihlasit') !== 0) { odhlas('Prihlásenie vypršalo, prihláste sa znova.'); }
@@ -218,7 +223,8 @@
     var titul = x.nazov || (x.text || '').split('\n')[0] || 'Bez textu';
     var popis = [k && !$('f-klient').value ? k.nazov : '', c ? c.nazov : ''].filter(Boolean).join(' · ');
     return '<button class="p-post" type="button" draggable="true" data-post="' + esc(x.id) + '" style="--farba:' + esc(farba) + '">' +
-      '<span class="p-post-meta">' + (x.cas ? '<b>' + esc(x.cas) + '</b>' : '') +
+      '<span class="p-post-meta">' + (x.media && x.media[0] ? (jeVideo(x.media[0]) ? '<video class="p-post-img" src="' + esc(x.media[0]) + '#t=0.1" muted preload="metadata"></video>' : '<img class="p-post-img" src="' + esc(x.media[0]) + '" alt="" loading="lazy">') : '') +
+      (x.cas ? '<b>' + esc(x.cas) + '</b>' : '') +
       x.kanaly.map(function (n) { return '<span class="p-s ' + n + '">' + SKRATKY[n] + '</span>'; }).join('') + '</span>' +
       '<span class="p-post-t">' + esc(titul) + '</span>' + (popis ? '<span class="p-post-k">' + esc(popis) + '</span>' : '') + '</button>';
   }
@@ -272,16 +278,20 @@
     fp.kampan.innerHTML = moznosti(k ? k.kampane.filter(function (c) { return !c.archiv || c.id === vybrana; }) : [], vybrana, 'Bez kampane');
   }
   function znaky() { var n = fp.text.value.length; $('post-znaky').textContent = n + ' znakov' + (n > 2200 ? ', Instagram zobrazí najviac 2 200' : ''); }
-  fp.text.addEventListener('input', znaky);
+  fp.text.addEventListener('input', function () { znaky(); kresliNahlad(); });
+  fp.typ.addEventListener('change', kresliNahlad);
+  $('post-siete').addEventListener('change', kresliNahlad);
   fp.klient.addEventListener('change', function () {
     var k = klient(fp.klient.value);
     kampaneKlienta(k, '');
     sieteKlienta(k, k ? k.kanaly.map(function (c) { return c.siet; }) : ['ig', 'fb']);
+    if (s.media.length && !confirm('Vizuály sa nahrávajú ku klientovi. Pri zmene klienta ich treba nahrať znova. Pokračovať?')) return;
+    s.media = []; kresliMedia(); kresliNahlad();
   });
 
   function otvorPost(x, datum) {
     if (!s.klienti.length) { toast('Najprv pridajte klienta v časti Klienti a kampane.'); location.hash = 'klienti'; return; }
-    s.post = x || null;
+    s.post = x || null; s.dlg = (s.dlg || 0) + 1;
     var kid = x ? x.klient : ($('f-klient').value || (s.klienti.length === 1 ? s.klienti[0].id : ''));
     var k = klient(kid);
     fp.reset();
@@ -299,11 +309,13 @@
     $('post-stav').textContent = STAVY[x ? x.stav : 'koncept'];
     $('post-info').textContent = x ? 'Pripravil(a) ' + x.autor + ', naposledy upravil(a) ' + x.upravil + ' ' + kedy(x.upravene) + '.' : '';
     $('post-zmazat').hidden = !x;
-    znaky();
+    s.media = x && x.media ? x.media.slice() : []; s.nahrava = 0; kresliMedia();
+    znaky(); kresliNahlad();
     $('dlg-post').showModal();
     (x ? fp.text : (kid ? fp.text : fp.klient)).focus();
   }
   $('post-zrusit').addEventListener('click', function () { $('dlg-post').close(); });
+  $('dlg-post').addEventListener('close', function () { s.post = null; s.dlg = (s.dlg || 0) + 1; s.nahrava = 0; $('nahlad').innerHTML = ''; });
   fp.addEventListener('submit', function (e) {
     e.preventDefault();
     var x = s.post;
@@ -314,6 +326,8 @@
     };
     if (!data.klient) { toast('Vyberte klienta.'); return; }
     if (!data.kanaly.length) { toast('Vyberte aspoň jednu sieť.'); return; }
+    if (s.nahrava) { toast('Počkajte, kým sa nahrajú všetky vizuály.'); return; }
+    data.media = s.media.slice();
     var req = x
       ? api('PUT', '/api/plan/posty?klient=' + encodeURIComponent(x.klient) + '&id=' + encodeURIComponent(x.id), Object.assign(data, { upravene: x.upravene }))
       : api('POST', '/api/plan/posty', data);
@@ -330,6 +344,141 @@
     api('DELETE', '/api/plan/posty?klient=' + encodeURIComponent(x.klient) + '&id=' + encodeURIComponent(x.id))
       .then(function () { $('dlg-post').close(); toast('Post je zmazaný.'); kalendar(); })
       .catch(function (err) { toast(err.message); });
+  });
+
+  // ---------- vizuály ----------
+  function zmensi(file) {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return Promise.resolve(file);
+    return new Promise(function (ok) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, MAX_STRANA / Math.max(w, h));
+        URL.revokeObjectURL(url);
+        if (k === 1 && file.size <= 1.5 * 1024 * 1024) return ok(file);
+        var c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
+        var ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (b) { ok(b && b.size < file.size ? b : file); }, 'image/jpeg', 0.88);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); ok(file); };
+      img.src = url;
+    });
+  }
+  function pripona(f) {
+    var t = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'video/mp4': 'mp4', 'video/webm': 'webm', 'video/quicktime': 'mov' }[f.type];
+    if (t) return t;
+    var m = /\.([a-z0-9]+)$/i.exec(f.name || ''), e = m ? m[1].toLowerCase() : '';
+    return ['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'webm', 'mov'].indexOf(e) >= 0 ? e : null;
+  }
+  function nahraj(kid, blob, ext, priebeh) {
+    var nazov = nahodne(8) + '.' + ext, spolu = Math.max(1, Math.ceil(blob.size / KUS)), i = 0;
+    var dalsi = function () {
+      if (i >= spolu) return Promise.resolve('/api/plan/subor/' + kid + '/' + nazov);
+      var cast = blob.slice(i * KUS, Math.min(blob.size, (i + 1) * KUS));
+      return api('PUT', '/api/plan/subor?klient=' + encodeURIComponent(kid) + '&nazov=' + nazov + '&cast=' + i + '&spolu=' + spolu + '&velkost=' + blob.size, cast)
+        .then(function () { i++; priebeh(Math.round(i / spolu * 100)); return dalsi(); });
+    };
+    return dalsi();
+  }
+  function kresliMedia(percent) {
+    $('post-media').innerHTML = s.media.map(function (f, i) {
+      return '<div class="p-m"><span class="p-m-n">' + (i + 1) + '</span>' +
+        (jeVideo(f) ? '<video src="' + esc(f) + '#t=0.1" muted preload="metadata"></video>' : '<img src="' + esc(f) + '" alt="">') +
+        '<div class="p-m-btns">' + (i ? '<button type="button" data-m="vlavo" data-i="' + i + '" aria-label="Posunúť dopredu">←</button>' : '') +
+        (i < s.media.length - 1 ? '<button type="button" data-m="vpravo" data-i="' + i + '" aria-label="Posunúť dozadu">→</button>' : '') +
+        '<button type="button" data-m="zmaz" data-i="' + i + '" aria-label="Odstrániť">×</button></div></div>';
+    }).join('') + (s.nahrava ? '<div class="p-m nahrava">Nahrávam ' + s.nahrava + '…<br>' + (percent || 0) + ' %</div>' : '');
+  }
+  $('post-media').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-m]'); if (!b) return;
+    var i = Number(b.dataset.i), m = s.media;
+    if (b.dataset.m === 'zmaz') m.splice(i, 1);
+    if (b.dataset.m === 'vlavo') m.splice(i - 1, 0, m.splice(i, 1)[0]);
+    if (b.dataset.m === 'vpravo') m.splice(i + 1, 0, m.splice(i, 1)[0]);
+    kresliMedia(); kresliNahlad();
+  });
+  $('post-subory').addEventListener('change', function () {
+    var kid = fp.klient.value, zoznam = Array.prototype.slice.call(this.files || []);
+    this.value = '';
+    if (!kid) { toast('Najprv vyberte klienta.'); return; }
+    zoznam = zoznam.filter(function (f) { if (pripona(f)) return true; toast(f.name + ' nie je obrázok ani video.'); return false; });
+    zoznam = zoznam.filter(function (f) { if (f.size <= 200 * 1024 * 1024) return true; toast(f.name + ' je väčší ako 200 MB.'); return false; });
+    if (s.media.length + s.nahrava + zoznam.length > 20) { toast('Jeden post môže mať najviac 20 vizuálov.'); zoznam = zoznam.slice(0, Math.max(0, 20 - s.media.length - s.nahrava)); }
+    if (!zoznam.length) return;
+    s.nahrava += zoznam.length; kresliMedia(0);
+    var poradie = Promise.resolve(), dlg = s.dlg;
+    zoznam.forEach(function (f) {
+      poradie = poradie.then(function () {
+        return zmensi(f).then(function (b) {
+          return nahraj(kid, b, b === f ? pripona(f) : 'jpg', function (p) { if (s.dlg === dlg) kresliMedia(p); });
+        }).then(function (cesta) {
+          if (s.dlg === dlg && $('dlg-post').open) { s.media.push(cesta); if (s.media.length > 1 && fp.typ.value === 'post') fp.typ.value = 'karusel'; if (jeVideo(cesta) && fp.typ.value === 'post') fp.typ.value = 'reels'; }
+        }).catch(function (err) { toast('Nahrávanie ' + f.name + ' zlyhalo: ' + err.message); })
+          .then(function () { s.nahrava = Math.max(0, s.nahrava - 1); kresliMedia(); kresliNahlad(); });
+      });
+    });
+  });
+
+  // ---------- náhľad ----------
+  var IKONY = {
+    srdce: '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9.3-8.6C1.2 8.6 2.9 5 6.4 5c2 0 3.2 1.1 3.9 2.2h3.4C14.4 6.1 15.6 5 17.6 5c3.5 0 5.2 3.6 3.7 6.4C19 15.6 12 20 12 20z"/></svg>',
+    bublina: '<svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z"/></svg>',
+    lietadlo: '<svg viewBox="0 0 24 24"><path d="M21 4 3 11l7 2 2 7 9-16zM10 13l11-9"/></svg>',
+    zalozka: '<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-5-6 5z"/></svg>',
+  };
+  function vybraneSiete() { return Array.prototype.map.call(fp.querySelectorAll('[name="siet"]:checked'), function (i) { return i.value; }); }
+  function ucet(siet) {
+    var k = klient(fp.klient.value);
+    var c = k && k.kanaly.filter(function (x) { return x.siet === siet && x.nazov; })[0];
+    return c ? c.nazov : (k ? k.nazov : 'Účet klienta');
+  }
+  function inicialy(t) { return esc(String(t).split(/\s+/).map(function (w) { return w[0] || ''; }).join('').slice(0, 2).toUpperCase()); }
+  function medium(f) { return jeVideo(f) ? '<video src="' + esc(f) + '" muted playsinline loop autoplay></video>' : '<img src="' + esc(f) + '" alt="">'; }
+  function skrat(t, n, viac) { t = t || ''; return t.length > n ? esc(t.slice(0, n).replace(/\s+\S*$/, '')) + '… <span class="n-viac">' + viac + '</span>' : esc(t); }
+  function nahladIg(typ, text, m) {
+    var meno = ucet('ig');
+    if (typ === 'story' || typ === 'reels') {
+      return '<div class="n-vert">' + (m[0] ? medium(m[0]) : '<div class="n-prazdne">Bez vizuálu</div>') +
+        (typ === 'story' ? '<div class="n-bar">' + (m.length > 1 ? m.map(function () { return '<i></i>'; }).join('') : '<i></i>') + '</div>' : '') +
+        '<div class="n-vert-hd"><span class="n-av">' + inicialy(meno) + '</span><b>' + esc(meno) + '</b></div>' +
+        (typ === 'reels' ? '<div class="n-vert-ft"><b>' + esc(meno) + '</b>' + skrat(text, 90, 'viac') + '</div>' : '') + '</div>';
+    }
+    return '<div class="n"><div class="n-hd"><span class="n-av">' + inicialy(meno) + '</span><b>' + esc(meno) + '</b></div>' +
+      (typ === 'text' ? '' : '<div class="n-med">' + (m[0] ? medium(m[0]) : '<div class="n-prazdne">Bez vizuálu</div>') +
+        (m.length > 1 ? '<span class="n-cnt">1/' + m.length + '</span>' : '') + '</div>' +
+        (m.length > 1 ? '<div class="n-dots">' + m.slice(0, 10).map(function () { return '<i></i>'; }).join('') + '</div>' : '')) +
+      '<div class="n-akc">' + IKONY.srdce + IKONY.bublina + IKONY.lietadlo + '<span class="n-save">' + IKONY.zalozka + '</span></div>' +
+      '<div class="n-txt"><b>' + esc(meno) + '</b> ' + skrat(text, 125, 'viac') + '</div></div>';
+  }
+  function nahladFb(typ, text, m, siet) {
+    var meno = ucet(siet), li = siet === 'linkedin';
+    var obr = '';
+    if (m.length === 1) obr = '<div class="n-med ' + (jeVideo(m[0]) && typ !== 'reels' ? 'r169' : typ === 'reels' || typ === 'story' ? 'r916' : '') + '">' + medium(m[0]) + '</div>';
+    else if (m.length > 1) obr = '<div class="n-grid">' + m.slice(0, 4).map(function (f, i) {
+      return '<div>' + medium(f) + (i === 3 && m.length > 4 ? '<span class="n-plus">+' + (m.length - 4) + '</span>' : '') + '</div>';
+    }).join('') + '</div>';
+    return '<div class="n"><div class="n-hd' + (li ? ' n-li-hd' : '') + '"><span class="n-av">' + inicialy(meno) + '</span><span><b>' + esc(meno) + '</b><small>' + (li ? 'Sledovatelia · Teraz' : 'Teraz · Verejné') + '</small></span></div>' +
+      '<div class="n-fb-txt">' + skrat(text, li ? 210 : 480, li ? '…viac' : 'Zobraziť viac') + '</div>' + (typ === 'text' ? '' : obr) +
+      '<div class="n-fb-akc"><span>' + (li ? 'Páči sa mi to' : 'Páči sa mi to') + '</span><span>Komentovať</span><span>' + (li ? 'Preposlať' : 'Zdieľať') + '</span></div></div>';
+  }
+  function nahladTt(text, m) {
+    var meno = ucet('tiktok');
+    return '<div class="n-vert">' + (m[0] ? medium(m[0]) : '<div class="n-prazdne">Bez videa</div>') +
+      '<div class="n-vert-ft"><b>@' + esc(meno.replace(/\s+/g, '').toLowerCase()) + '</b>' + skrat(text, 100, 'viac') + '</div></div>';
+  }
+  function kresliNahlad() {
+    var siete = vybraneSiete();
+    if (siete.indexOf(s.nahladSiet) < 0) s.nahladSiet = siete[0] || '';
+    $('nahlad-tabs').innerHTML = siete.map(function (n) {
+      return '<button type="button" role="tab" data-siet="' + n + '" aria-selected="' + (n === s.nahladSiet) + '">' + SIETE[n] + '</button>';
+    }).join('');
+    var typ = fp.typ.value, text = fp.text.value, m = s.media, n = s.nahladSiet;
+    $('nahlad').innerHTML = !n ? '<p class="e-hint">Vyberte sieť.</p>'
+      : n === 'ig' ? nahladIg(typ, text, m)
+      : n === 'tiktok' ? nahladTt(text, m)
+      : nahladFb(typ, text, m, n);
+  }
+  $('nahlad-tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-siet]'); if (!b) return; s.nahladSiet = b.dataset.siet; kresliNahlad();
   });
 
   // ---------- tím (správa účtov heslom tímu) ----------

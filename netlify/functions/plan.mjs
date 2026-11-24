@@ -25,12 +25,17 @@
 //   POST   /api/plan/posty                nový post
 //   PUT    /api/plan/posty?klient=&id=    úprava postu (aj presun na iný deň)
 //   DELETE /api/plan/posty?klient=&id=
+//   PUT    /api/plan/subor?klient=&nazov=&cast=&spolu=&velkost=   nahrá kúsok vizuálu (po 4 MB)
+// Verejné (názov súboru je náhodný):
+//   GET    /api/plan/subor/<klient>/<nazov>   obrázok alebo video, podporuje Range
+//   subory/<klient>/<nazov>             popis súboru {typ, velkost, casti, kus, cas, hotovo}
+//   subory/<klient>/<nazov>/c<i>        obsah súboru po kúskoch
 import { getStore } from '@netlify/blobs';
 import { randomBytes, scryptSync, createHash, timingSafeEqual } from 'node:crypto';
 import { hesloOk, hesloNastavene } from '../tim-heslo.mjs';
 
 export const config = {
-  path: ['/api/plan', '/api/plan/:cast'],
+  path: ['/api/plan', '/api/plan/:cast', '/api/plan/subor/:klient/:nazov'],
 };
 
 const LOGIN = /^[a-z0-9][a-z0-9._-]{1,31}$/;
@@ -42,6 +47,14 @@ const FARBA = /^#[0-9a-fA-F]{6}$/;
 export const SIETE = ['ig', 'fb', 'tiktok', 'linkedin'];
 export const TYPY = ['post', 'karusel', 'reels', 'story', 'video', 'text'];
 export const STAVY = ['koncept', 'interna', 'klient', 'uprava', 'schvalene', 'zverejnene'];
+const NAZOV = /^[a-z0-9]{8,40}\.(jpg|jpeg|png|webp|gif|mp4|webm|mov)$/;
+const TYPY_SUBOROV = {
+  jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif',
+  mp4: 'video/mp4', webm: 'video/webm', mov: 'video/quicktime',
+};
+export const KUS = 4 * 1024 * 1024; // musí sedieť s KUS v interne/plan/plan.js
+const MAX_SUBOR = 200 * 1024 * 1024;
+const MAX_MEDII = 20;
 const RELACIA_DNI = 30;
 const MIN_HESLO = 8;
 
@@ -119,6 +132,9 @@ function vycistiPost(b, klient, pred, kto) {
     kanaly: [...new Set(kanaly)],
     typ: TYPY.includes(b.typ) ? b.typ : 'post',
     nazov: txt(b.nazov, 120),
+    media: (Array.isArray(b.media) ? b.media : []).map(String)
+      .filter((f) => f.startsWith(`/api/plan/subor/${klient.id}/`) && NAZOV.test(f.split('/').pop()))
+      .slice(0, MAX_MEDII),
     text: txt(b.text, 5000),
     poznamka: txt(b.poznamka, 1000),
     stav: pred ? pred.stav : 'koncept',
@@ -127,6 +143,45 @@ function vycistiPost(b, klient, pred, kto) {
     upravene: teraz,
     upravil: kto.meno,
   };
+}
+
+async function zmazSubor(store, klientId, cesta) {
+  const nazov = String(cesta).split('/').pop();
+  if (!NAZOV.test(nazov)) return;
+  const { blobs } = await store.list({ prefix: `subory/${klientId}/${nazov}` });
+  await Promise.all(blobs.map(({ key }) => store.delete(key)));
+}
+
+async function servirujSubor(req, store, klientId, nazov) {
+  if (!ID.test(klientId || '') || !NAZOV.test(nazov || '')) return new Response('Nenájdené', { status: 404 });
+  const meta = await store.get(`subory/${klientId}/${nazov}`, { type: 'json' });
+  if (!meta || !meta.hotovo) return new Response('Nenájdené', { status: 404 });
+  const hlavicky = {
+    'Content-Type': meta.typ, 'Accept-Ranges': 'bytes', 'X-Robots-Tag': 'noindex',
+    'Cache-Control': 'public, max-age=31536000, immutable',
+  };
+  const kus = meta.kus || KUS;
+  const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.get('range') || '');
+  if (range && (range[1] || range[2])) {
+    const od = range[1] ? Number(range[1]) : Math.max(0, meta.velkost - Number(range[2]));
+    if (od >= meta.velkost) return new Response(null, { status: 416, headers: { 'Content-Range': `bytes */${meta.velkost}` } });
+    const i = Math.floor(od / kus);
+    let po = range[1] && range[2] ? Number(range[2]) : meta.velkost - 1;
+    po = Math.min(po, (i + 1) * kus - 1, meta.velkost - 1);
+    const buf = await store.get(`subory/${klientId}/${nazov}/c${i}`, { type: 'arrayBuffer' });
+    if (!buf) return new Response('Nenájdené', { status: 404 });
+    const cast = buf.slice(od - i * kus, po - i * kus + 1);
+    return new Response(cast, { status: 206, headers: { ...hlavicky, 'Content-Range': `bytes ${od}-${po}/${meta.velkost}`, 'Content-Length': String(cast.byteLength) } });
+  }
+  let i = 0;
+  const stream = new ReadableStream({
+    async pull(ctrl) {
+      if (i >= meta.casti) { ctrl.close(); return; }
+      const buf = await store.get(`subory/${klientId}/${nazov}/c${i++}`, { type: 'arrayBuffer' });
+      ctrl.enqueue(new Uint8Array(buf));
+    },
+  });
+  return new Response(stream, { status: 200, headers: { ...hlavicky, 'Content-Length': String(meta.velkost) } });
 }
 
 async function postyMesiaca(store, klientId, mesiac) {
@@ -141,6 +196,12 @@ export async function handle(req, store) {
   const m = req.method;
 
   try {
+    // ---------- vizuály (verejné, názov je náhodný) ----------
+    if (cast === 'subor' && m === 'GET') {
+      const [, , , , klientId, nazov] = url.pathname.split('/');
+      return servirujSubor(req, store, klientId, nazov);
+    }
+
     // ---------- prihlásenie ----------
     if (cast === 'prihlasit' && m === 'POST') {
       const b = await telo(req, 2000);
@@ -208,6 +269,27 @@ export async function handle(req, store) {
       return json({ ok: true });
     }
 
+    if (cast === 'subor' && m === 'PUT') {
+      const kid = q('klient'), nazov = q('nazov');
+      const cislo = Number(q('cast')), spolu = Number(q('spolu')), velkost = Number(q('velkost'));
+      if (!ID.test(kid) || !NAZOV.test(nazov)) return json({ chyba: 'Neplatný názov súboru.' }, 400);
+      if (!(await store.get(`klienti/${kid}`, { type: 'json' }))) return json({ chyba: 'Neznámy klient.' }, 404);
+      if (!Number.isInteger(cislo) || !Number.isInteger(spolu) || cislo < 0 || cislo >= spolu || !(velkost > 0) || velkost > MAX_SUBOR || spolu !== Math.ceil(velkost / KUS)) {
+        return json({ chyba: velkost > MAX_SUBOR ? 'Súbor je väčší ako 200 MB.' : 'Neplatné údaje o súbore.' }, 400);
+      }
+      const buf = await req.arrayBuffer();
+      const ocakavane = cislo < spolu - 1 ? KUS : velkost - KUS * (spolu - 1);
+      if (buf.byteLength !== ocakavane) return json({ chyba: 'Kúsok súboru nemá správnu veľkosť.' }, 400);
+      await store.set(`subory/${kid}/${nazov}/c${cislo}`, buf);
+      const meta = { typ: TYPY_SUBOROV[nazov.split('.').pop()], velkost, casti: spolu, kus: KUS, cas: new Date().toISOString(), hotovo: false };
+      if (cislo === spolu - 1) {
+        const { blobs } = await store.list({ prefix: `subory/${kid}/${nazov}/c` });
+        meta.hotovo = blobs.length === spolu;
+      }
+      await store.setJSON(`subory/${kid}/${nazov}`, meta);
+      return json({ ok: true, hotovo: meta.hotovo, cesta: `/api/plan/subor/${kid}/${nazov}` });
+    }
+
     if (cast === 'klienti') {
       if (m === 'GET') {
         const { blobs } = await store.list({ prefix: 'klienti/' });
@@ -237,7 +319,7 @@ export async function handle(req, store) {
         return json({ ok: true, klient: k });
       }
       if (m === 'DELETE') {
-        for (const prefix of [`posty/${id}/`, `kde/${id}/`]) {
+        for (const prefix of [`posty/${id}/`, `kde/${id}/`, `subory/${id}/`]) {
           const { blobs } = await store.list({ prefix });
           await Promise.all(blobs.map(({ key }) => store.delete(key)));
         }
@@ -288,11 +370,14 @@ export async function handle(req, store) {
           await store.set(`kde/${kid}/${id}`, novyMes);
           await store.delete(`posty/${kid}/${mes}/${id}`);
         }
+        const ostava = new Set(p.media);
+        await Promise.all((pred.media || []).filter((f) => !ostava.has(f)).map((f) => zmazSubor(store, kid, f)));
         return json({ ok: true, post: p });
       }
       if (m === 'DELETE') {
         await store.delete(`posty/${kid}/${mes}/${id}`);
         await store.delete(`kde/${kid}/${id}`);
+        await Promise.all((pred.media || []).map((f) => zmazSubor(store, kid, f)));
         return json({ ok: true });
       }
       return json({ chyba: 'Nepodporovaná metóda.' }, 405);
